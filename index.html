@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>متجري - متجر إلكتروني مع تزامن سحابي</title>
+    <title id="store-title">متجري - متجر إلكتروني</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <style>
-        /* ============================================================
-           🎨 التصميم الأساسي
-           ============================================================ */
+        /* ===== كل الـ CSS ===== */
         :root {
             --primary: #4f46e5;
             --primary-dark: #4338ca;
@@ -37,9 +35,7 @@
         body { background: var(--bg); color: var(--text); min-height: 100vh; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
 
-        /* ============================================================
-           📌 الهيدر
-           ============================================================ */
+        /* ===== الهيدر ===== */
         header {
             background: var(--card);
             padding: 12px 20px;
@@ -53,8 +49,18 @@
             flex-wrap: wrap;
             gap: 10px;
         }
-        .logo { font-weight: 900; font-size: 1.2rem; color: var(--primary); cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .logo {
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: var(--primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
         .logo i { color: var(--gold); font-size: 1.4rem; }
+        .logo span { color: var(--text); }
+
         .nav-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
         .nav-btn {
             background: var(--bg); border: 1px solid rgba(0,0,0,0.08);
@@ -69,9 +75,7 @@
         }
         .cart-badge { background: var(--danger); padding: 1px 6px; border-radius: 50%; font-size: 0.65rem; }
 
-        /* ============================================================
-           🏠 الهيرو
-           ============================================================ */
+        /* ===== الهيرو ===== */
         .hero {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: #fff; padding: 40px 20px; text-align: center; margin: 15px 0 25px; border-radius: 16px;
@@ -79,9 +83,7 @@
         .hero h1 { font-size: 1.8rem; font-weight: 900; }
         .hero p { opacity: 0.9; max-width: 500px; margin: 5px auto; font-size: 0.95rem; }
 
-        /* ============================================================
-           🛍️ المنتجات
-           ============================================================ */
+        /* ===== المنتجات ===== */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -104,9 +106,7 @@
         }
         .add-btn:hover { background: var(--primary); color: #fff; }
 
-        /* ============================================================
-           📦 النوافذ المنبثقة
-           ============================================================ */
+        /* ===== النوافذ المنبثقة ===== */
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15,23,42,0.6); backdrop-filter: blur(5px); z-index: 3000;
@@ -144,9 +144,7 @@
         th, td { padding: 8px 10px; text-align: right; border-bottom: 1px solid rgba(0,0,0,0.05); color: var(--text); }
         th { background: var(--bg); font-weight: 700; color: var(--text-light); }
 
-        /* ============================================================
-           ⚙️ لوحة التحكم
-           ============================================================ */
+        /* ===== لوحة التحكم ===== */
         #admin-panel {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); z-index: 2000; overflow-y: auto;
@@ -165,9 +163,6 @@
         .admin-section { display: none; }
         .admin-section.active { display: block; }
 
-        /* ============================================================
-           ☁️ مؤشر التزامن
-           ============================================================ */
         .sync-status {
             display: inline-block; padding: 3px 10px; border-radius: 20px;
             font-size: 0.65rem; font-weight: bold; margin-right: 5px;
@@ -183,9 +178,7 @@
         .btn-import { background: var(--warning); color: #000; }
         .btn-import:hover { opacity: 0.8; }
 
-        /* ============================================================
-           📱 التجاوب مع الموبايل
-           ============================================================ */
+        /* ===== التجاوب ===== */
         @media (max-width: 768px) {
             .products-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
             .hero h1 { font-size: 1.3rem; }
@@ -198,9 +191,6 @@
             .product-card .img-wrap { height: 100px; font-size: 1.5rem; }
         }
 
-        /* ============================================================
-           📖 تعليمات داخلية
-           ============================================================ */
         .instructions-box {
             background: var(--bg); border: 2px solid var(--gold); border-radius: var(--radius);
             padding: 20px; margin-bottom: 20px; color: var(--text);
@@ -214,15 +204,16 @@
 </head>
 <body>
 
-    <!-- الهيدر -->
+    <!-- ===== الهيدر ===== -->
     <header>
         <div class="logo" onclick="location.reload()">
-            <i class="fas fa-store"></i> متجري
+            <i class="fas fa-store"></i>
+            <span id="store-name-header">متجري</span>
         </div>
         <div class="nav-actions">
             <span class="sync-status offline" id="sync-status">💾 تخزين محلي</span>
             <button class="nav-btn" onclick="toggleDarkMode()"><i class="fas fa-moon" id="theme-icon"></i></button>
-            <button class="nav-btn" onclick="openAdmin()"><i class="fas fa-user-shield"></i> لوحة التحكم</button>
+            <button class="nav-btn" onclick="openAdminDirect()"><i class="fas fa-user-shield"></i> لوحة التحكم</button>
             <div class="cart-btn" onclick="openCart()">
                 <i class="fas fa-shopping-bag"></i>
                 <span class="cart-badge" id="cart-count">0</span>
@@ -230,13 +221,13 @@
         </div>
     </header>
 
-    <!-- الهيرو -->
+    <!-- ===== الهيرو ===== -->
     <div class="hero">
-        <h1>🛍️ مرحباً بك في متجري</h1>
+        <h1>🛍️ مرحباً بك في <span id="store-name-hero">متجري</span></h1>
         <p>أفضل المنتجات بأفضل الأسعار، تسوق الآن واستمتع بتجربة فريدة</p>
     </div>
 
-    <!-- المنتجات -->
+    <!-- ===== المنتجات ===== -->
     <div class="container">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:15px;">
             <h2 style="font-size:1.3rem;font-weight:800;">🛒 المنتجات</h2>
@@ -245,7 +236,7 @@
         <div class="products-grid" id="products-grid"></div>
     </div>
 
-    <!-- لوحة التحكم -->
+    <!-- ===== لوحة التحكم (دخول مباشر من غير كلمة سر) ===== -->
     <div id="admin-panel">
         <div class="admin-sidebar">
             <h3 style="color:var(--primary);font-weight:900;margin-bottom:12px;font-size:0.9rem;"><i class="fas fa-cogs"></i> لوحة التحكم</h3>
@@ -258,7 +249,7 @@
         </div>
         <div class="admin-content">
 
-            <!-- القيادة -->
+            <!-- ===== القيادة ===== -->
             <div id="sec-dashboard" class="admin-section active">
                 <h2 style="font-weight:800;margin-bottom:15px;font-size:1.3rem;">📊 القيادة</h2>
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;">
@@ -276,7 +267,7 @@
                     </div>
                 </div>
 
-                <!-- تصدير/استيراد البيانات -->
+                <!-- تصدير/استيراد -->
                 <div style="background:var(--card);padding:15px;border-radius:var(--radius);margin-top:15px;">
                     <h3 style="font-size:0.9rem;margin-bottom:10px;">💾 نقل البيانات (نسخ احتياطي)</h3>
                     <div class="data-actions">
@@ -287,7 +278,7 @@
                 </div>
             </div>
 
-            <!-- المنتجات -->
+            <!-- ===== المنتجات ===== -->
             <div id="sec-products" class="admin-section">
                 <h2 style="font-weight:800;margin-bottom:12px;font-size:1.2rem;">📦 المنتجات</h2>
                 <div style="background:var(--card);padding:15px;border-radius:var(--radius);margin-bottom:15px;">
@@ -296,7 +287,7 @@
                         <input type="text" id="prod-name" class="form-control" placeholder="الاسم" />
                         <input type="number" id="prod-price" class="form-control" placeholder="السعر" />
                         <input type="number" id="prod-qty" class="form-control" placeholder="الكمية" />
-                        <input type="text" id="prod-img" class="form-control" placeholder="رابط الصورة" value="🛍️" />
+                        <input type="text" id="prod-img" class="form-control" placeholder="🛍️" value="🛍️" />
                     </div>
                     <button class="btn-primary" onclick="addProduct()" style="margin-top:8px;"><i class="fas fa-plus-circle"></i> إضافة</button>
                 </div>
@@ -308,7 +299,7 @@
                 </div>
             </div>
 
-            <!-- الطلبات -->
+            <!-- ===== الطلبات ===== -->
             <div id="sec-orders" class="admin-section">
                 <h2 style="font-weight:800;margin-bottom:12px;font-size:1.2rem;">📋 الطلبات</h2>
                 <div style="overflow-x:auto;">
@@ -319,7 +310,7 @@
                 </div>
             </div>
 
-            <!-- التزامن السحابي -->
+            <!-- ===== التزامن السحابي ===== -->
             <div id="sec-firebase" class="admin-section">
                 <h2 style="font-weight:800;margin-bottom:12px;font-size:1.2rem;">☁️ التزامن السحابي</h2>
                 
@@ -348,9 +339,21 @@
                 </div>
             </div>
 
-            <!-- الإعدادات (رقم واتساب اختياري) -->
+            <!-- ===== الإعدادات ===== -->
             <div id="sec-settings" class="admin-section">
                 <h2 style="font-weight:800;margin-bottom:12px;font-size:1.2rem;">⚙️ الإعدادات</h2>
+                
+                <!-- اسم المتجر -->
+                <div style="background:var(--card);padding:15px;border-radius:var(--radius);margin-bottom:15px;">
+                    <h3 style="font-size:0.9rem;margin-bottom:10px;">🏷️ اسم المتجر</h3>
+                    <div class="form-group">
+                        <label>اسم المتجر (يظهر في الهيدر والصفحة الرئيسية)</label>
+                        <input type="text" id="store-name-input" class="form-control" placeholder="اسم متجرك" />
+                    </div>
+                    <button class="btn-primary" onclick="saveStoreName()"><i class="fas fa-save"></i> حفظ الاسم</button>
+                </div>
+
+                <!-- رقم واتساب -->
                 <div style="background:var(--card);padding:15px;border-radius:var(--radius);margin-bottom:15px;">
                     <h3 style="font-size:0.9rem;margin-bottom:10px;">📱 رقم واتساب (لإستلام الطلبات)</h3>
                     <div class="form-group">
@@ -360,16 +363,11 @@
                     </div>
                     <button class="btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> حفظ</button>
                 </div>
-                <div style="background:var(--card);padding:15px;border-radius:var(--radius);">
-                    <h3 style="font-size:0.9rem;margin-bottom:10px;">🔐 كلمة مرور لوحة التحكم</h3>
-                    <div class="form-group"><label>كلمة المرور الجديدة</label><input type="password" id="new-pass" class="form-control" placeholder="••••••••" /></div>
-                    <button class="btn-primary" onclick="changePassword()"><i class="fas fa-key"></i> تغيير</button>
-                </div>
             </div>
         </div>
     </div>
 
-    <!-- السلة -->
+    <!-- ===== السلة ===== -->
     <div id="cart-modal" class="modal">
         <div class="modal-content">
             <button class="close-modal" onclick="closeCart()">&times;</button>
@@ -391,19 +389,7 @@
         </div>
     </div>
 
-    <!-- نافذة الدخول -->
-    <div id="admin-login-modal" class="modal">
-        <div class="modal-content" style="max-width:320px;text-align:center;">
-            <button class="close-modal" onclick="closeAdminLogin()">&times;</button>
-            <div style="font-size:2rem;color:var(--primary);margin-bottom:8px;"><i class="fas fa-user-shield"></i></div>
-            <h2 style="font-weight:800;font-size:1.1rem;">تسجيل الدخول</h2>
-            <p style="color:var(--text-light);font-size:0.75rem;margin-bottom:10px;">كلمة المرور الافتراضية: 123456</p>
-            <input type="password" id="admin-pass" class="form-control" placeholder="كلمة المرور" />
-            <button class="btn-primary" onclick="verifyAdmin()" style="margin-top:8px;width:100%;">دخول</button>
-        </div>
-    </div>
-
-    <!-- JavaScript -->
+    <!-- ===== JavaScript ===== -->
     <script>
         // ============================================================
         // 1. المتغيرات والتهيئة
@@ -419,13 +405,48 @@
 
         let orders = JSON.parse(localStorage.getItem('store_orders')) || [];
         let cart = [];
-        let adminPass = localStorage.getItem('admin_pass') || '123456';
-
-        // ===== رقم واتساب (اختياري) =====
         let adminPhone = localStorage.getItem('admin_phone') || '';
 
+        // ===== اسم المتجر =====
+        let storeName = localStorage.getItem('store_name') || 'متجري';
+
         // ============================================================
-        // 2. ربط Firebase والتزامن السحابي
+        // 2. دوال اسم المتجر
+        // ============================================================
+        function loadStoreName() {
+            document.getElementById('store-name-header').textContent = storeName;
+            document.getElementById('store-name-hero').textContent = storeName;
+            document.getElementById('store-title').textContent = storeName + ' - متجر إلكتروني';
+            document.getElementById('store-name-input').value = storeName;
+        }
+
+        function saveStoreName() {
+            const name = document.getElementById('store-name-input').value.trim();
+            if (name) {
+                storeName = name;
+                localStorage.setItem('store_name', name);
+                loadStoreName();
+                alert('✅ تم حفظ اسم المتجر بنجاح!');
+            } else {
+                alert('❌ الرجاء إدخال اسم للمتجر');
+            }
+        }
+
+        // ============================================================
+        // 3. فتح لوحة التحكم مباشرة (من غير كلمة سر)
+        // ============================================================
+        function openAdminDirect() {
+            document.getElementById('admin-panel').style.display = 'block';
+            renderAdminTables();
+            updateDashboard();
+        }
+
+        function closeAdmin() {
+            document.getElementById('admin-panel').style.display = 'none';
+        }
+
+        // ============================================================
+        // 4. ربط Firebase
         // ============================================================
         function connectFirebase() {
             const config = {
@@ -534,7 +555,7 @@
         }
 
         // ============================================================
-        // 3. عرض المنتجات والسلة
+        // 5. عرض المنتجات والسلة
         // ============================================================
         function renderAll() {
             renderProducts(products);
@@ -655,7 +676,6 @@
                 return;
             }
 
-            // التحقق من وجود رقم واتساب
             if (!adminPhone) {
                 alert('⚠️ عذراً، لم يتم إعداد رقم واتساب بعد. يرجى التواصل مع المسؤول.');
                 return;
@@ -702,33 +722,8 @@
         }
 
         // ============================================================
-        // 4. لوحة التحكم والمدير
+        // 6. لوحة التحكم
         // ============================================================
-        function openAdmin() {
-            document.getElementById('admin-login-modal').style.display = 'flex';
-        }
-
-        function closeAdminLogin() {
-            document.getElementById('admin-login-modal').style.display = 'none';
-        }
-
-        function verifyAdmin() {
-            const inputPass = document.getElementById('admin-pass').value;
-            if (inputPass === adminPass) {
-                closeAdminLogin();
-                document.getElementById('admin-panel').style.display = 'block';
-                document.getElementById('admin-pass').value = '';
-                renderAdminTables();
-                updateDashboard();
-            } else {
-                alert('❌ كلمة المرور غير صحيحة!');
-            }
-        }
-
-        function closeAdmin() {
-            document.getElementById('admin-panel').style.display = 'none';
-        }
-
         function showAdmin(sectionId, element) {
             document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.admin-menu-item').forEach(m => m.classList.remove('active'));
@@ -831,20 +826,8 @@
             }
         }
 
-        function changePassword() {
-            const pass = document.getElementById('new-pass').value.trim();
-            if (pass.length >= 4) {
-                adminPass = pass;
-                localStorage.setItem('admin_pass', pass);
-                document.getElementById('new-pass').value = '';
-                alert('✅ تم تغيير كلمة المرور بنجاح');
-            } else {
-                alert('كلمة المرور يجب أن تكون 4 أحرف/أرقام على الأقل');
-            }
-        }
-
         // ============================================================
-        // 5. التصدير/الاستيراد والوضع الداكن
+        // 7. تصدير/استيراد ووضع داكن
         // ============================================================
         function exportData() {
             const data = { products, orders };
@@ -888,16 +871,17 @@
         }
 
         // ============================================================
-        // 6. التهيئة التشغيلية
+        // 8. بدء التشغيل
         // ============================================================
         window.addEventListener('DOMContentLoaded', () => {
-            // تحميل رقم واتساب المحفوظ
+            // تحميل اسم المتجر
+            loadStoreName();
+
+            // تحميل رقم واتساب
             const savedPhone = localStorage.getItem('admin_phone');
             if (savedPhone) {
                 adminPhone = savedPhone;
                 document.getElementById('admin-phone').value = savedPhone;
-            } else {
-                document.getElementById('admin-phone').value = '';
             }
 
             if (firebaseConfig) {
