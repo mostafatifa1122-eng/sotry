@@ -3,173 +3,276 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>نظام إدارة المنشآت والمتطلبات الصناعية (ERP)</title>
-    
+    <title>نظام ERP الشامل والجامع للمنشآت والمحلات</title>
+
     <!-- Bootstrap 5 RTL CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Google Font (Cairo) -->
+    <!-- Google Font: Cairo -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         :root {
-            --sidebar-bg: #1a3a5c;
-            --sidebar-hover: #244b75;
-            --sidebar-active: #0d6efd;
+            --color-main: #9c27b0;
+            --color-sweets: #ff6b9d;
+            --color-factory: #2196f3;
+            --color-shop: #4caf50;
+            --sidebar-width: 280px;
+            --touch-min-height: 44px;
             --bg-light: #f4f6f9;
-            --touch-size: 44px;
         }
 
         body {
             font-family: 'Cairo', sans-serif;
             background-color: var(--bg-light);
-            color: #333;
+            color: #2c3e50;
             overflow-x: hidden;
             padding-bottom: env(safe-area-inset-bottom);
         }
 
-        /* Loading Spinner Overlay */
+        /* Dark Mode Theme Variables */
+        body.dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        body.dark-mode .card,
+        body.dark-mode .table-responsive,
+        body.dark-mode .modal-content,
+        body.dark-mode .bg-white {
+            background-color: #1e1e1e !important;
+            color: #ffffff !important;
+            border-color: #333 !important;
+        }
+        body.dark-mode .table {
+            color: #e0e0e0 !important;
+        }
+        body.dark-mode .table-light {
+            background-color: #2a2a2a !important;
+            color: #fff !important;
+        }
+        body.dark-mode .sidebar {
+            background-color: #0d0d0d;
+        }
+
+        /* Loading Screen Animation */
         #loadingOverlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255, 255, 255, 0.9);
-            z-index: 9999;
+            background: #ffffff;
+            z-index: 99999;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.4s ease;
         }
 
-        /* Top Notification Bar */
-        .notification-bar {
-            background: linear-gradient(90deg, #1a3a5c, #0d6efd);
+        /* Top Notification Header */
+        .top-notification {
+            background: linear-gradient(90deg, var(--color-main), #673ab7);
             color: white;
-            padding: 8px 15px;
             font-size: 0.85rem;
+            padding: 6px 16px;
         }
 
-        /* Sidebar Styling */
+        /* Layout & Navigation Sidebar */
         .sidebar {
-            background-color: var(--sidebar-bg);
+            width: var(--sidebar-width);
             min-height: 100vh;
-            color: white;
-            transition: all 0.3s ease;
-            z-index: 1000;
+            background-color: #1a1c23;
+            color: #ffffff;
+            position: fixed;
+            top: 0;
+            right: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1040;
+            box-shadow: -2px 0 12px rgba(0,0,0,0.15);
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 20px 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.2);
         }
 
         .sidebar .nav-link {
-            color: #d1d9e6;
-            padding: 12px 16px;
-            margin: 3px 8px;
-            border-radius: 8px;
-            min-height: var(--touch-size);
+            color: #b0b7c3;
+            padding: 12px 18px;
+            margin: 4px 10px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             gap: 12px;
-            font-size: 0.92rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            min-height: var(--touch-min-height);
             transition: all 0.2s ease;
         }
 
         .sidebar .nav-link:hover {
-            background-color: var(--sidebar-hover);
             color: #ffffff;
+            background-color: rgba(255,255,255,0.08);
         }
 
         .sidebar .nav-link.active {
-            background-color: var(--sidebar-active);
-            color: #ffffff;
-            font-weight: 700;
+            color: #ffffff !important;
         }
 
-        .sidebar .nav-link i {
-            font-size: 1.15rem;
+        .sidebar .nav-link.active.main-tab { background-color: var(--color-main); }
+        .sidebar .nav-link.active.sweets-tab { background-color: var(--color-sweets); }
+        .sidebar .nav-link.active.factory-tab { background-color: var(--color-factory); }
+        .sidebar .nav-link.active.shop-tab { background-color: var(--color-shop); }
+
+        /* Sub-navigation Pills */
+        .sub-nav {
+            background: white;
+            padding: 10px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            white-space: nowrap;
         }
 
-        /* Content Area */
-        .main-content {
+        .sub-nav .btn {
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            min-height: var(--touch-min-height);
+        }
+
+        /* Main Workspace Wrapper */
+        .main-wrapper {
+            margin-right: var(--sidebar-width);
             padding: 20px;
-            min-height: calc(100vh - 40px);
+            min-height: 100vh;
+            transition: all 0.3s ease;
         }
 
-        .card-stat {
+        /* Business Overview Big Cards */
+        .business-card {
             border: none;
+            border-radius: 16px;
+            color: white;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .business-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+
+        .business-card.sweets-bg { background: linear-gradient(135deg, #ff6b9d, #d81b60); }
+        .business-card.factory-bg { background: linear-gradient(135deg, #2196f3, #1565c0); }
+        .business-card.shop-bg { background: linear-gradient(135deg, #4caf50, #2e7d32); }
+
+        .business-card .card-icon {
+            font-size: 4rem;
+            opacity: 0.25;
+            position: absolute;
+            left: 20px;
+            bottom: 10px;
+        }
+
+        /* Metric Dashboard Stat Cards */
+        .stat-card {
+            border: none;
+            border-radius: 14px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-icon {
+            width: 54px;
+            height: 54px;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transition: transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
         }
 
-        .card-stat:hover {
-            transform: translateY(-3px);
-        }
-
+        /* Tables & Action Elements */
         .table-responsive {
-            background-color: white;
             border-radius: 12px;
+            background: white;
             box-shadow: 0 4px 12px rgba(0,0,0,0.03);
             padding: 15px;
         }
 
-        /* Touch-friendly buttons */
         .btn-touch {
-            min-height: var(--touch-size);
+            min-height: var(--touch-min-height);
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding-left: 18px;
-            padding-right: 18px;
+            gap: 8px;
+            font-weight: 600;
         }
 
-        /* Back to top button */
+        /* Back to top Floating Button */
         #btnBackToTop {
             position: fixed;
             bottom: 25px;
             left: 25px;
-            width: 48px;
-            height: 48px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
+            background-color: var(--color-main);
+            color: white;
             display: none;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            z-index: 990;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+            z-index: 1000;
+            border: none;
         }
 
-        /* Print Mode Adjustments */
+        /* Printable Media Overrides */
         @media print {
-            .sidebar, .notification-bar, #btnBackToTop, .no-print, .btn, .modal {
+            .sidebar, .top-notification, .sub-nav, #btnBackToTop, .no-print, .btn, .modal {
                 display: none !important;
             }
-            .main-content {
-                width: 100% !important;
-                margin: 0 !important;
+            .main-wrapper {
+                margin-right: 0 !important;
                 padding: 0 !important;
             }
-            .table-responsive {
-                box-shadow: none !important;
-                padding: 0 !important;
+            body {
+                background: white !important;
+                color: black !important;
             }
         }
 
-        /* Responsive Breakpoints Rules */
+        /* Responsive Breakpoint Rules */
         @media (max-width: 991.98px) {
             .sidebar {
-                position: fixed;
-                top: 0; right: -100%;
-                width: 280px;
-                height: 100%;
-                overflow-y: auto;
+                right: -100%;
             }
             .sidebar.show {
                 right: 0;
+            }
+            .main-wrapper {
+                margin-right: 0;
             }
             .sidebar-backdrop {
                 position: fixed;
                 top: 0; left: 0; right: 0; bottom: 0;
                 background: rgba(0,0,0,0.5);
-                z-index: 999;
+                z-index: 1030;
                 display: none;
             }
             .sidebar-backdrop.show {
@@ -180,685 +283,56 @@
 </head>
 <body>
 
-    <!-- Loading Animation Overlay -->
+    <!-- Loading Animation -->
     <div id="loadingOverlay">
-        <div class="text-center">
-            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
-            <p class="mt-3 text-secondary fw-bold">جاري تحميل نظام ERP...</p>
+        <div class="spinner-border text-primary" style="width: 3.5rem; height: 3.5rem;" role="status"></div>
+        <h5 class="mt-3 fw-bold text-dark">جاري تشغيل نظام ERP المتكامل...</h5>
+    </div>
+
+    <!-- Top Notification Bar -->
+    <div class="top-notification d-flex justify-content-between align-items-center no-print">
+        <div>
+            <i class="bi bi-shield-check me-1"></i> النظام يعمل بالكامل بدخول مباشر وبدون كلمة مرور | البيانات محفوظة محلياً
+        </div>
+        <div class="d-flex gap-3 align-items-center">
+            <button class="btn btn-sm btn-outline-light py-0" onclick="toggleDarkMode()">
+                <i class="bi bi-moon-stars me-1"></i> الوضع الداكن
+            </button>
+            <span id="liveClock" class="d-none d-md-inline font-monospace"></span>
         </div>
     </div>
 
-    <!-- Notification Bar -->
-    <div class="notification-bar d-flex justify-content-between align-items-center no-print">
-        <span><i class="bi bi-info-circle-fill me-1"></i> النظام متصل ومباشر - جميع الصلاحيات مفتوحة بدون كلمة مرور</span>
-        <span id="currentDateTime" class="d-none d-md-inline"></span>
-    </div>
+    <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 
-    <div class="container-fluid p-0">
-        <div class="row g-0">
-            
-            <!-- Backdrop for Mobile Sidebar -->
-            <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
-
-            <!-- Sidebar Navigation (16 Sections) -->
-            <div class="col-lg-2 sidebar" id="mainSidebar">
-                <div class="p-3 text-center border-bottom border-secondary d-flex justify-content-between align-items-center">
-                    <div>
-                        <h5 class="m-0 fw-bold text-white"><i class="bi bi-box-seam me-2"></i>نظام ERP</h5>
-                        <small class="text-muted">المنشآت والمصانع</small>
-                    </div>
-                    <button class="btn btn-sm text-white d-lg-none" onclick="toggleSidebar()"><i class="bi bi-x-lg fs-4"></i></button>
-                </div>
-                
-                <div class="nav flex-column py-2" id="v-pills-tab" role="tablist">
-                    <a class="nav-link active" data-bs-toggle="pill" href="#sec-dashboard" onclick="switchSection('dashboard')"><i class="bi bi-speedometer2"></i> لوحة التحكم</a>
-                    <a class="nav-link" data-bs-toggle="pill" href="#sec-products" onclick="switchSection('products')"><i class="bi bi-box-seam"></i> المنتجات والمخازن</a>
-                    <a class="nav-link" data-bs-toggle="pill" href="#sec-invoices" onclick="switchSection('invoices')"><i class="bi bi-receipt"></i> الفواتير (بيع/شراء)</a>
-                    <a class="nav-link" data-bs-toggle="pill" href="#sec-batches" onclick="switchSection('batches')"><i class="bi bi-tags"></i> تتبع الدفعات (Batch)</a>
-                    <a class="nav-link" data-bs-toggle="pill" href="#sec-lab" onclick="switchSection('lab')"><i class="bi bi-flask"></i> المعمل الكيميائي</a>
-                    <a class="nav-link" data-bs-toggle="pill" href="#sec-employees" onclick="switchSection('employees')"><i class="bi bi-people"></i> إدارة الموظفين</a>
-                    <a class="nav-link" data-bs-toggle="pill" href="#sec-attendance" onclick="switchSection('attendance')"><i class="bi bi-clock-check"></i> الحضور والانصراف</a>
-                    <a class="nav-link" data-bs-toggle="pill" href="#sec-payroll" onclick="switchSection('payroll')"><i class="bi bi-cash-stack"></i> مسير الرواتب</a>
-                    <a class="nav-link" data-bs-toggle="pill" href="#sec-qc" onclick="switchSection('qc')"><i class="bi bi-check-circle-switch"></i> مراقبة الجودة (QC)</a>
-                    <a class="nav-link" data-bs-toggle="pill" href="#sec-sds" onclick="switchSection('sds')"><i class="bi bi-file-earmark-medical"></i> صحائف السلامة (SDS)</a>
-                    <a class="nav-link" data-bs-toggle="pill" href="#sec-waste" onclick="switchSection('waste')"><i class="bi bi-trash3"></i> المخلفات الكيميائية</a>
-                    <a class="nav-link" data-bs-toggle="pill" href="#sec-maintenance" onclick="switchSection('maintenance')"><i class="bi bi-tools"></i> الصيانة الدورية</a>
-                    <a class="nav-link" data-bs-toggle="pill" href="#sec-shipping" onclick="switchSection('shipping')"><i class="bi bi-truck"></i> سجل الشحن</a>
-                    <a class="nav-link" data-sec-btn data-bs-toggle="pill" href="#sec-complaints" onclick="switchSection('complaints')"><i class="bi bi-exclamation-octagon"></i> الشكاوى والمتابعة</a>
-                    <a class="nav-link" data-bs-toggle="pill" href="#sec-iso" onclick="switchSection('iso')"><i class="bi bi-patch-check"></i> تقارير الأيزو</a>
-                    <a class="nav-link" data-bs-toggle="pill" href="#sec-users" onclick="switchSection('users')"><i class="bi bi-person-gear"></i> إدارة المستخدمين</a>
-                </div>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header d-flex justify-content-between align-items-center">
+            <div>
+                <h5 class="fw-bold m-0 text-white"><i class="bi bi-cpu-fill text-warning me-2"></i>منصة ERP</h5>
+                <small class="text-muted">المصانع والمحلات والحلويات</small>
             </div>
+            <button class="btn text-white d-lg-none p-0 fs-4" onclick="toggleSidebar()"><i class="bi bi-x-lg"></i></button>
+        </div>
 
-            <!-- Main Content Container -->
-            <div class="col-lg-10 main-content">
-                
-                <!-- Mobile Top Header Bar -->
-                <div class="d-flex justify-content-between align-items-center mb-3 d-lg-none bg-white p-2 rounded shadow-sm no-print">
-                    <button class="btn btn-outline-dark btn-touch" onclick="toggleSidebar()">
-                        <i class="bi bi-list fs-4"></i>
-                    </button>
-                    <h5 class="m-0 fw-bold text-primary">نظام ERP المتكامل</h5>
-                    <div></div>
-                </div>
-
-                <!-- Active View Container -->
-                <div id="sectionContainer">
-
-                    <!-- Section 1: Dashboard -->
-                    <div id="sec-dashboard" class="section-view">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h4 class="fw-bold m-0"><i class="bi bi-speedometer2 text-primary me-2"></i>لوحة التحكم والإحصائيات</h4>
-                            <button class="btn btn-outline-secondary btn-touch no-print" onclick="window.print()"><i class="bi bi-printer me-1"></i> طباعة الملخص</button>
-                        </div>
-
-                        <!-- Stat Cards -->
-                        <div class="row g-3 mb-4">
-                            <div class="col-12 col-sm-6 col-xl-3">
-                                <div class="card card-stat bg-primary text-white p-3">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <small>إجمالي المنتجات</small>
-                                            <h3 class="fw-bold m-0 mt-2" id="stat-products">0</h3>
-                                        </div>
-                                        <i class="bi bi-box-seam fs-1 opacity-50"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-sm-6 col-xl-3">
-                                <div class="card card-stat bg-success text-white p-3">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <small>إجمالي إيرادات الفواتير</small>
-                                            <h3 class="fw-bold m-0 mt-2" id="stat-invoices">0 ج.م</h3>
-                                        </div>
-                                        <i class="bi bi-currency-dollar fs-1 opacity-50"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-sm-6 col-xl-3">
-                                <div class="card card-stat bg-warning text-dark p-3">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <small>عدد الموظفين</small>
-                                            <h3 class="fw-bold m-0 mt-2" id="stat-employees">0</h3>
-                                        </div>
-                                        <i class="bi bi-people fs-1 opacity-50"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-sm-6 col-xl-3">
-                                <div class="card card-stat bg-danger text-white p-3">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <small>الشكاوى المفتوحة</small>
-                                            <h3 class="fw-bold m-0 mt-2" id="stat-complaints">0</h3>
-                                        </div>
-                                        <i class="bi bi-exclamation-triangle fs-1 opacity-50"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Dashboard Alerts Section -->
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="card border-0 shadow-sm p-3">
-                                    <h5 class="fw-bold mb-3 text-danger"><i class="bi bi-bell me-2"></i>تنبيهات نواقص المخزون</h5>
-                                    <ul class="list-group list-group-flush" id="dashAlertsList">
-                                        <li class="list-group-item text-muted">لا يوجد تنبيهات مخزون حالياً</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card border-0 shadow-sm p-3">
-                                    <h5 class="fw-bold mb-3 text-info"><i class="bi bi-journal-check me-2"></i>ملخص حركة اليوم</h5>
-                                    <p class="text-muted m-0">النظام يعمل بكفاءة عالية بدون تسجيل دخول. جميع الوحدات نشطة وقابلة للتعديل الفوري عبر القائمة الجانبية.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Generic Section Template Container for remaining 15 Sections -->
-                    <div id="sec-generic" class="section-view d-none">
-                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-                            <h4 class="fw-bold m-0" id="genericTitle">اسم القسم</h4>
-                            <div class="d-flex gap-2 no-print">
-                                <button class="btn btn-primary btn-touch" onclick="openModal()"><i class="bi bi-plus-lg me-1"></i> إضافة جديد</button>
-                                <button class="btn btn-outline-success btn-touch" onclick="exportCSV()"><i class="bi bi-file-earmark-excel me-1"></i> تصدير CSV</button>
-                            </div>
-                        </div>
-
-                        <!-- Search Bar -->
-                        <div class="row mb-3 no-print">
-                            <div class="col-12 col-md-6">
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-                                    <input type="text" id="searchInput" class="form-control" placeholder="بحث في هذا القسم..." onkeyup="filterTable()">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Dynamic Table View -->
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle" id="dataTable">
-                                <thead class="table-light" id="tableHead"></thead>
-                                <tbody id="tableBody"></tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
+        <div class="nav flex-column py-3">
+            <a class="nav-link active main-tab" id="link-main" href="#" onclick="switchPanel('main')">
+                <i class="bi bi-house-door fs-5"></i> 🏠 الرئيسية العامة
+            </a>
+            <a class="nav-link sweets-tab" id="link-sweets" href="#" onclick="switchPanel('sweets')">
+                <i class="bi bi-cake2 fs-5"></i> 🍰 مصانع الحلويات
+            </a>
+            <a class="nav-link factory-tab" id="link-factory" href="#" onclick="switchPanel('factory')">
+                <i class="bi bi-building-gear fs-5"></i> 🏭 المصانع العامة
+            </a>
+            <a class="nav-link shop-tab" id="link-shop" href="#" onclick="switchPanel('shop')">
+                <i class="bi bi-shop fs-5"></i> 🏪 المحلات التجارية
+            </a>
+            <hr class="border-secondary my-2 mx-3">
+            <a class="nav-link" id="link-reports" href="#" onclick="switchPanel('reports')">
+                <i class="bi bi-bar-chart-line fs-5"></i> 📊 التقارير الشاملة
+            </a>
+            <a class="nav-link" id="link-settings" href="#" onclick="switchPanel('settings')">
+                <i class="bi bi-gear fs-5"></i> ⚙️ إعدادات النظام
+            </a>
         </div>
     </div>
-
-    <!-- Scroll to top button -->
-    <button id="btnBackToTop" class="btn btn-primary no-print" onclick="scrollToTop()">
-        <i class="bi bi-arrow-up fs-5"></i>
-    </button>
-
-    <!-- Dynamic Add/Edit Modal -->
-    <div class="modal fade" id="dynamicModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title fw-bold" id="modalTitle">إضافة سجل جديد</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="dynamicForm" class="row g-3"></form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-touch" data-bs-dismiss="modal">إلغاء</button>
-                    <button type="button" class="btn btn-primary btn-touch" onclick="saveRecord()">حفظ البيانات</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bootstrap 5 JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        /* ==========================================================================
-           1. Configuration & Structure Definitions for 16 Sections
-           ========================================================================== */
-        let currentSection = 'dashboard';
-        let editingIndex = -1;
-        let bsModal = null;
-
-        // Structure schemas for sections
-        const schemas = {
-            products: {
-                title: 'إدارة المنتجات والمخازن',
-                fields: [
-                    { id: 'code', label: 'كود المنتج / HS Code', type: 'text' },
-                    { id: 'name', label: 'اسم المنتج', type: 'text' },
-                    { id: 'category', label: 'التصنيف / القسم', type: 'text' },
-                    { id: 'qty', label: 'الكمية المتاحة', type: 'number' },
-                    { id: 'minQty', label: 'حد التنبيه الأدنى', type: 'number' },
-                    { id: 'price', label: 'السعر (ج.م)', type: 'number' }
-                ]
-            },
-            invoices: {
-                title: 'إدارة الفواتير (بيع / شراء / تصدير)',
-                fields: [
-                    { id: 'invNum', label: 'رقم الفاتورة', type: 'text' },
-                    { id: 'type', label: 'نوع الفاتورة', type: 'select', options: ['فاتورة بيع', 'فاتورة شراء', 'فاتورة تصدير'] },
-                    { id: 'client', label: 'العميل / المورد', type: 'text' },
-                    { id: 'amount', label: 'المبلغ الأساسي', type: 'number' },
-                    { id: 'tax', label: 'الضريبة (14%)', type: 'number' },
-                    { id: 'date', label: 'التاريخ', type: 'date' }
-                ]
-            },
-            batches: {
-                title: 'تتبع الدفعات (Batch Tracking)',
-                fields: [
-                    { id: 'batchNum', label: 'رقم التشغيلة / Batch', type: 'text' },
-                    { id: 'productName', label: 'اسم المنتج / الخامة', type: 'text' },
-                    { id: 'prodDate', label: 'تاريخ الإنتاج', type: 'date' },
-                    { id: 'expDate', label: 'تاريخ الانتهاء', type: 'date' },
-                    { id: 'line', label: 'خط الإنتاج', type: 'text' }
-                ]
-            },
-            lab: {
-                title: 'المعمل الكيميائي والتحاليل',
-                fields: [
-                    { id: 'sampleId', label: 'رقم العينة', type: 'text' },
-                    { id: 'material', label: 'المادة / الخامة', type: 'text' },
-                    { id: 'ph', label: 'درجة الحموضة (pH)', type: 'text' },
-                    { id: 'viscosity', label: 'اللزوجة (Viscosity)', type: 'text' },
-                    { id: 'result', label: 'نتيجة الفحص', type: 'select', options: ['مطابق للمواصفات', 'غير مطابق'] }
-                ]
-            },
-            employees: {
-                title: 'إدارة الموظفين',
-                fields: [
-                    { id: 'empId', label: 'رقم الموظف / البصمة', type: 'text' },
-                    { id: 'name', label: 'اسم الموظف', type: 'text' },
-                    { id: 'role', label: 'الوظيفة / القسم', type: 'text' },
-                    { id: 'phone', label: 'رقم الهاتف', type: 'text' },
-                    { id: 'salary', label: 'الراتب الأساسي', type: 'number' }
-                ]
-            },
-            attendance: {
-                title: 'سجل الحضور والانصراف',
-                fields: [
-                    { id: 'empName', label: 'اسم الموظف', type: 'text' },
-                    { id: 'fingerprintId', label: 'رقم البصمة', type: 'text' },
-                    { id: 'date', label: 'التاريخ', type: 'date' },
-                    { id: 'checkIn', label: 'وقت الحضور', type: 'time' },
-                    { id: 'checkOut', label: 'وقت الانصراف', type: 'time' }
-                ]
-            },
-            payroll: {
-                title: 'مسير الرواتب والمستحقات',
-                fields: [
-                    { id: 'empName', label: 'اسم الموظف', type: 'text' },
-                    { id: 'basicSalary', label: 'الراتب الأساسي', type: 'number' },
-                    { id: 'deductions', label: 'الخصومات / التأمينات', type: 'number' },
-                    { id: 'taxes', label: 'الضرائب', type: 'number' },
-                    { id: 'netSalary', label: 'صافي الراتب', type: 'number' },
-                    { id: 'status', label: 'حالة الصرف', type: 'select', options: ['تم الصرف', 'قيد الانتظار'] }
-                ]
-            },
-            qc: {
-                title: 'مراقبة الجودة (Quality Control)',
-                fields: [
-                    { id: 'batchRef', label: 'رقم التشغيلة / Batch', type: 'text' },
-                    { id: 'inspector', label: 'اسم القائم بالفحص', type: 'text' },
-                    { id: 'checkDate', label: 'تاريخ الفحص', type: 'date' },
-                    { id: 'status', label: 'نتيجة الجودة (Pass/Fail)', type: 'select', options: ['Pass (اجتاز)', 'Fail (مرفوض)'] },
-                    { id: 'notes', label: 'ملاحظات الفحص', type: 'text' }
-                ]
-            },
-            sds: {
-                title: 'صحائف السلامة للمواد (SDS)',
-                fields: [
-                    { id: 'chemName', label: 'اسم المادة الكيميائية', type: 'text' },
-                    { id: 'casNum', label: 'رقم CAS', type: 'text' },
-                    { id: 'hazards', label: 'عبارات الخطر (Hazard Statements)', type: 'text' },
-                    { id: 'issueDate', label: 'تاريخ الإصدار', type: 'date' },
-                    { id: 'expiryDate', label: 'تاريخ الانتهاء والمراجعة', type: 'date' }
-                ]
-            },
-            waste: {
-                title: 'سجل المخلفات الكيميائية والصناعية',
-                fields: [
-                    { id: 'wasteType', label: 'نوع المخلفات', type: 'text' },
-                    { id: 'quantity', label: 'الكمية (كجم/لتر)', type: 'number' },
-                    { id: 'vendor', label: 'المتعهد المعتمد للتخلص', type: 'text' },
-                    { id: 'disposalDate', label: 'تاريخ التسليم', type: 'date' },
-                    { id: 'certNum', label: 'رقم شهادة التخلص', type: 'text' }
-                ]
-            },
-            maintenance: {
-                title: 'جدول الصيانة الدورية والوقائية',
-                fields: [
-                    { id: 'equipName', label: 'اسم المعدة / الآلة', type: 'text' },
-                    { id: 'maintType', label: 'نوع الصيانة', type: 'select', options: ['وقائية', 'علاجية (طوارئ)'] },
-                    { id: 'schedDate', label: 'تاريخ الصيانة المخطط', type: 'date' },
-                    { id: 'technician', label: 'الفني / الشركة المنفذة', type: 'text' },
-                    { id: 'status', label: 'حالة الصيانة', type: 'select', options: ['تمت بنجاح', 'مطلوب متابعة', 'مجدولة'] }
-                ]
-            },
-            shipping: {
-                title: 'سجل الشحن والتوصيل',
-                fields: [
-                    { id: 'shipNum', label: 'رقم بوليصة الشحن', type: 'text' },
-                    { id: 'destination', label: 'جهة الوصول / العميل', type: 'text' },
-                    { id: 'carrier', label: 'شركة الشحن / السائق', type: 'text' },
-                    { id: 'shipDate', label: 'تاريخ الخروج', type: 'date' },
-                    { id: 'status', label: 'حالة الشحنة', type: 'select', options: ['في الطريق', 'تم التسليم', 'قيد التحضير'] }
-                ]
-            },
-            complaints: {
-                title: 'سجل الشكاوى ومتابعة 48 ساعة',
-                fields: [
-                    { id: 'client', label: 'اسم العميل / الجهة', type: 'text' },
-                    { id: 'subject', label: 'موضوع الشكوى', type: 'text' },
-                    { id: 'recDate', label: 'تاريخ الاستلام', type: 'date' },
-                    { id: 'action', label: 'الإجراء المتخذ', type: 'text' },
-                    { id: 'status', label: 'حالة المعالجة', type: 'select', options: ['مفتوحة (قيد المتابعة)', 'تم الحل والإغلاق'] }
-                ]
-            },
-            iso: {
-                title: 'تقارير الأيزو والسلامة ISO',
-                fields: [
-                    { id: 'docCode', label: 'كود الوثيقة / Document Code', type: 'text' },
-                    { id: 'docTitleAr', label: 'عنوان التقرير (عربي)', type: 'text' },
-                    { id: 'docTitleEn', label: 'Title (English)', type: 'text' },
-                    { id: 'standard', label: 'المعيار (ISO 9001/14001/45001)', type: 'text' },
-                    { id: 'revDate', label: 'تاريخ المراجعة', type: 'date' }
-                ]
-            },
-            users: {
-                title: 'إدارة أفراد النظام والمستخدمين',
-                fields: [
-                    { id: 'username', label: 'اسم المستخدم', type: 'text' },
-                    { id: 'fullname', label: 'الاسم بالكامل', type: 'text' },
-                    { id: 'role', label: 'الصلاحية / الدور', type: 'select', options: ['مدير نظام', 'مسؤول مخزن', 'فني معمل', 'مسؤول مبيعات'] },
-                    { id: 'status', label: 'حالة الحساب', type: 'select', options: ['نشط', 'غير نشط'] }
-                ]
-            }
-        };
-
-        /* ==========================================================================
-           2. Core Initializer & Storage Functions
-           ========================================================================== */
-        document.addEventListener('DOMContentLoaded', () => {
-            bsModal = new bootstrap.Modal(document.getElementById('dynamicModal'));
-            updateClock();
-            setInterval(updateClock, 1000);
-            
-            // Seed initial sample data if empty
-            initStorageData();
-
-            // Refresh Dashboard Statistics
-            refreshDashboard();
-
-            // Hide Loading Overlay smoothly
-            setTimeout(() => {
-                const loader = document.getElementById('loadingOverlay');
-                loader.style.opacity = '0';
-                setTimeout(() => loader.style.display = 'none', 300);
-            }, 500);
-
-            // Handle scroll to top button visibility
-            window.onscroll = function() {
-                const btn = document.getElementById('btnBackToTop');
-                if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
-                    btn.style.display = "flex";
-                } else {
-                    btn.style.display = "none";
-                }
-            };
-        });
-
-        function updateClock() {
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-            const timeStr = now.toLocaleTimeString('ar-EG');
-            document.getElementById('currentDateTime').innerText = `${dateStr} - ${timeStr}`;
-        }
-
-        function getStoredData(key) {
-            const data = localStorage.getItem('erp_' + key);
-            return data ? JSON.parse(data) : [];
-        }
-
-        function setStoredData(key, arrayData) {
-            localStorage.setItem('erp_' + key, JSON.stringify(arrayData));
-        }
-
-        function initStorageData() {
-            if (!localStorage.getItem('erp_products')) {
-                setStoredData('products', [
-                    { code: 'HS-2804', name: 'مادة خامة أ', category: 'كيماويات', qty: 150, minQty: 20, price: 1200 },
-                    { code: 'HS-3901', name: 'محلول معالج ب', category: 'سوائل', qty: 10, minQty: 15, price: 450 }
-                ]);
-            }
-            if (!localStorage.getItem('erp_invoices')) {
-                setStoredData('invoices', [
-                    { invNum: 'INV-1001', type: 'فاتورة بيع', client: 'شركة النور', amount: 15000, tax: 2100, date: '2026-03-01' }
-                ]);
-            }
-            if (!localStorage.getItem('erp_employees')) {
-                setStoredData('employees', [
-                    { empId: '101', name: 'أحمد محمود', role: 'مهندس جودة', phone: '0100000000', salary: 8500 }
-                ]);
-            }
-            if (!localStorage.getItem('erp_complaints')) {
-                setStoredData('complaints', [
-                    { client: 'مصنع الأمل', subject: 'تأخير شحنة', recDate: '2026-03-02', action: 'جاري التنسيق مع الشحن', status: 'مفتوحة (قيد المتابعة)' }
-                ]);
-            }
-        }
-
-        /* ==========================================================================
-           3. UI Navigation & View Controller
-           ========================================================================== */
-        function toggleSidebar() {
-            document.getElementById('mainSidebar').classList.toggle('show');
-            document.getElementById('sidebarBackdrop').classList.toggle('show');
-        }
-
-        function switchSection(secKey) {
-            currentSection = secKey;
-            
-            // Close mobile sidebar if open
-            document.getElementById('mainSidebar').classList.remove('show');
-            document.getElementById('sidebarBackdrop').classList.remove('show');
-
-            // Toggle visibility of views
-            const dashView = document.getElementById('sec-dashboard');
-            const genView = document.getElementById('sec-generic');
-
-            if (secKey === 'dashboard') {
-                dashView.classList.remove('d-none');
-                genView.classList.add('d-none');
-                refreshDashboard();
-            } else {
-                dashView.classList.add('d-none');
-                genView.classList.remove('d-none');
-                
-                // Configure generic section UI
-                const schema = schemas[secKey];
-                document.getElementById('genericTitle').innerHTML = `<i class="bi bi-folder2-open text-primary me-2"></i>${schema.title}`;
-                document.getElementById('searchInput').value = '';
-                
-                renderTable();
-            }
-        }
-
-        /* ==========================================================================
-           4. Dynamic Table Renderer & Search Filter
-           ========================================================================== */
-        function renderTable() {
-            const schema = schemas[currentSection];
-            const data = getStoredData(currentSection);
-            const thead = document.getElementById('tableHead');
-            const tbody = document.getElementById('tableBody');
-
-            // Render Table Header
-            let headHTML = '<tr><th>#</th>';
-            schema.fields.forEach(f => {
-                headHTML += `<th>${f.label}</th>`;
-            });
-            headHTML += '<th class="text-center no-print">الإجراءات</th></tr>';
-            thead.innerHTML = headHTML;
-
-            // Render Table Rows
-            if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="${schema.fields.length + 2}" class="text-center text-muted py-4">لا توجد بيانات مسجلة في هذا القسم</td></tr>`;
-                return;
-            }
-
-            let bodyHTML = '';
-            data.forEach((row, idx) => {
-                bodyHTML += `<tr><td>${idx + 1}</td>`;
-                schema.fields.forEach(f => {
-                    let val = row[f.id] !== undefined ? row[f.id] : '-';
-                    bodyHTML += `<td>${val}</td>`;
-                });
-                bodyHTML += `
-                    <td class="text-center no-print">
-                        <button class="btn btn-sm btn-outline-primary me-1" onclick="openModal(${idx})"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="deleteRecord(${idx})"><i class="bi bi-trash"></i></button>
-                    </td>
-                </tr>`;
-            });
-            tbody.innerHTML = bodyHTML;
-        }
-
-        function filterTable() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const rows = document.querySelectorAll('#tableBody tr');
-
-            rows.forEach(row => {
-                const text = row.innerText.toLowerCase();
-                row.style.display = text.includes(query) ? '' : 'none';
-            });
-        }
-
-        /* ==========================================================================
-           5. Dynamic Modal Form Generation, Add, Edit & Delete Operations
-           ========================================================================== */
-        function openModal(editIndex = -1) {
-            editingIndex = editIndex;
-            const schema = schemas[currentSection];
-            const data = getStoredData(currentSection);
-            const form = document.getElementById('dynamicForm');
-            
-            document.getElementById('modalTitle').innerText = editIndex === -1 ? `إضافة جديد - ${schema.title}` : `تعديل - ${schema.title}`;
-
-            let formHTML = '';
-            schema.fields.forEach(f => {
-                const val = (editIndex !== -1 && data[editIndex] && data[editIndex][f.id] !== undefined) ? data[editIndex][f.id] : '';
-                
-                formHTML += `<div class="col-12 col-md-6">
-                    <label class="form-label fw-bold">${f.label}</label>`;
-                
-                if (f.type === 'select') {
-                    formHTML += `<select class="form-select btn-touch" id="input_${f.id}">`;
-                    f.options.forEach(opt => {
-                        const selected = val === opt ? 'selected' : '';
-                        formHTML += `<option value="${opt}" ${selected}>${opt}</option>`;
-                    });
-                    formHTML += `</select>`;
-                } else {
-                    formHTML += `<input type="${f.type}" class="form-control btn-touch" id="input_${f.id}" value="${val}">`;
-                }
-
-                formHTML += `</div>`;
-            });
-
-            form.innerHTML = formHTML;
-            bsModal.show();
-        }
-
-        function saveRecord() {
-            const schema = schemas[currentSection];
-            const data = getStoredData(currentSection);
-            let newRecord = {};
-
-            schema.fields.forEach(f => {
-                const input = document.getElementById(`input_${f.id}`);
-                if (input) {
-                    newRecord[f.id] = input.value;
-                }
-            });
-
-            if (editingIndex === -1) {
-                data.push(newRecord);
-            } else {
-                data[editingIndex] = newRecord;
-            }
-
-            setStoredData(currentSection, data);
-            bsModal.hide();
-            renderTable();
-            refreshDashboard();
-        }
-
-        function deleteRecord(idx) {
-            if (confirm('هل أنت تأكد من رغبتك في حذف هذا السجل بشكل نهائي؟')) {
-                const data = getStoredData(currentSection);
-                data.splice(idx, 1);
-                setStoredData(currentSection, data);
-                renderTable();
-                refreshDashboard();
-            }
-        }
-
-        /* ==========================================================================
-           6. Dashboard Aggregation & Analytics
-           ========================================================================== */
-        function refreshDashboard() {
-            const products = getStoredData('products');
-            const invoices = getStoredData('invoices');
-            const employees = getStoredData('employees');
-            const complaints = getStoredData('complaints');
-
-            // Product Stats
-            document.getElementById('stat-products').innerText = products.length;
-
-            // Invoices Revenue Calculation
-            let totalRev = 0;
-            invoices.forEach(inv => {
-                const amt = parseFloat(inv.amount) || 0;
-                const tax = parseFloat(inv.tax) || 0;
-                totalRev += (amt + tax);
-            });
-            document.getElementById('stat-invoices').innerText = totalRev.toLocaleString('ar-EG') + ' ج.م';
-
-            // Employee Stats
-            document.getElementById('stat-employees').innerText = employees.length;
-
-            // Open Complaints Stats
-            const openComp = complaints.filter(c => c.status && c.status.includes('مفتوحة'));
-            document.getElementById('stat-complaints').innerText = openComp.length;
-
-            // Low Stock Dashboard Alerts
-            const alertsList = document.getElementById('dashAlertsList');
-            const lowStock = products.filter(p => (parseFloat(p.qty) || 0) <= (parseFloat(p.minQty) || 0));
-
-            if (lowStock.length === 0) {
-                alertsList.innerHTML = `<li class="list-group-item text-success"><i class="bi bi-check-circle me-2"></i>جميع الكميات في المستويات الآمنة</li>`;
-            } else {
-                let alertHTML = '';
-                lowStock.forEach(p => {
-                    alertHTML += `<li class="list-group-item d-flex justify-content-between align-items-center text-danger">
-                        <span><i class="bi bi-exclamation-triangle-fill me-2"></i>${p.name} (الكود: ${p.code})</span>
-                        <span class="badge bg-danger rounded-pill">المتبقي: ${p.qty}</span>
-                    </li>`;
-                });
-                alertsList.innerHTML = alertHTML;
-            }
-        }
-
-        /* ==========================================================================
-           7. CSV Export & Utility Features
-           ========================================================================== */
-        function exportCSV() {
-            const schema = schemas[currentSection];
-            const data = getStoredData(currentSection);
-
-            if (data.length === 0) {
-                alert('لا توجد بيانات متاحة للتصدير في هذا القسم!');
-                return;
-            }
-
-            let csvContent = "\uFEFF"; // UTF-8 BOM for Arabic compatibility
-            
-            // Header Row
-            const headers = schema.fields.map(f => `"${f.label}"`);
-            csvContent += headers.join(",") + "\n";
-
-            // Data Rows
-            data.forEach(row => {
-                const values = schema.fields.map(f => {
-                    let val = row[f.id] !== undefined ? row[f.id] : '';
-                    return `"${val.toString().replace(/"/g, '""')}"`;
-                });
-                csvContent += values.join(",") + "\n";
-            });
-
-            // Download Trigger
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", `ERP_Export_${currentSection}_${new Date().toISOString().slice(0,10)}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        function scrollToTop() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-    </script>
-</body>
-</html>
