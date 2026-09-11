@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>نظام إدارة محلات الملابس - احترافي</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        :root {
+            --primary: #0f172a;
+            --primary-light: #1e293b;
+            --secondary: #2c7a62;
+            --gold: #f5a623;
+            --gold-hover: #d98e16;
+            --bg-light: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --instapay: #6c3c9e;
+            --whatsapp: #25d366;
+            --vodafone: #e60000;
+            --success: #16a34a;
+            --border: #e2e8f0;
+            --shadow: 0 10px 40px rgba(0,0,0,0.08);
+            --shadow-hover: 0 20px 60px rgba(0,0,0,0.15);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+        .container { width: 90%; max-width: 1200px; margin: 0 auto; }
+
+        .header {
+            background: var(--primary);
+            padding: 0.8rem 0;
+            border-bottom: 3px solid var(--gold);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+        .header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .header .logo {
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header .logo span { color: var(--gold); }
+        .header .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .header .nav-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+            font-size: 0.95rem;
+        }
+        .header .nav-links a:hover { color: var(--gold); }
+
+        .hero-new {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            color: #fff;
+            padding: 4rem 0 5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-new .badge {
+            display: inline-block;
+            background: rgba(245,166,35,0.15);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 0.3rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        .hero-new h1 {
+            font-size: 3.2rem;
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+        .hero-new h1 span { color: var(--gold); }
+        .hero-new p {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            max-width: 650px;
+            margin: 0 auto 2rem;
+        }
+        .btn-gold {
+            background: var(--gold);
+            color: #000;
+            padding: 1rem 2.8rem;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.7rem;
+            box-shadow: 0 10px 30px rgba(245,166,35,0.3);
+        }
+        .btn-gold:hover { background: var(--gold-hover); transform: translateY(-3px); }
+        .btn-outline-light {
+            background: transparent;
+            color: #fff;
+            padding: 1rem 2.2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .btn-outline-light:hover { background: rgba(255,255,255,0.1); border-color: #fff; }
+
+        .section-padding { padding: 4rem 0; }
+        .bg-light { background: var(--bg-light); }
+        .bg-white { background: var(--card-bg); }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .section-title h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--primary);
+            position: relative;
+            display: inline-block;
+        }
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 50%;
+            transform: translateX(50%);
+            width: 60px;
+            height: 4px;
+            background: var(--gold);
+            border-radius: 4px;
+        }
+        .section-title p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-top: 1rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            transition: 0.3s;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+        .card .icon { font-size: 2.5rem; color: var(--secondary); margin-bottom: 1rem; }
+        .card h3 { font-size: 1.2rem; color: var(--primary); margin-bottom: 0.5rem; }
+        .card p { color: var(--text-muted); font-size: 0.95rem; }
+
+        .mobile-frame {
+            position: relative;
+            max-width: 280px;
+            margin: 0 auto;
+            border-radius: 36px;
+            border: 8px solid #1a1a2e;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            background: #fff;
+        }
+        .mobile-frame iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+            display: block;
+        }
+        .mobile-frame .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 24px;
+            background: #1a1a2e;
+            border-radius: 0 0 16px 16px;
+            z-index: 10;
+        }
+
+        .payment-card {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            transition: 0.3s;
+        }
+        .payment-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
+        .payment-card i { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .payment-card .instapay-color { color: var(--instapay); }
+        .payment-card .vodafone-color { color: var(--vodafone); }
+        .payment-card .wallet-color { color: var(--gold); }
+        .payment-card h4 { color: var(--primary); margin-bottom: 0.3rem; }
+        .payment-card p { color: var(--text-muted); font-weight: 700; }
+
+        .pricing-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            text-align: center;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        .pricing-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-hover); }
+        .pricing-card.featured {
+            border: 2px solid var(--gold);
+            transform: scale(1.03);
+        }
+        .pricing-card.featured:hover { transform: scale(1.03) translateY(-8px); }
+        .pricing-card .badge {
+            background: var(--gold);
+            color: #000;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        .pricing-card .price {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--primary);
+        }
+        .pricing-card .price span { font-size: 1rem; font-weight: 400; color: var(--text-muted); }
+        .pricing-card .old-price {
+            text-decoration: line-through;
+            color: #94a3b8;
+            font-size: 1.1rem;
+            margin-right: 0.5rem;
+        }
+        .pricing-card ul {
+            list-style: none;
+            text-align: right;
+            margin: 1.5rem 0;
+            flex-grow: 1;
+        }
+        .pricing-card ul li {
+            padding: 0.4rem 0;
+            color: var(--text-muted);
+        }
+        .pricing-card ul li i { color: var(--success); margin-left: 0.5rem; }
+        .pricing-card .btn {
+            padding: 0.9rem;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            width: 100%;
+        }
+        .btn-wa { background: var(--whatsapp); color: #fff; }
+        .btn-wa:hover { background: #1eb954; }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+        .step-card {
+            text-align: center;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: var(--gold);
+            color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            margin: 0 auto 1rem;
+        }
+
+        .guarantee-box {
+            background: var(--card-bg);
+            padding: 3rem;
+            border-radius: 24px;
+            text-align: center;
+            border: 2px solid var(--gold);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .guarantee-box i { font-size: 3.5rem; color: var(--gold); margin-bottom: 1rem; }
+        .guarantee-box h2 { font-size: 1.8rem; color: var(--primary); margin-bottom: 0.5rem; }
+        .guarantee-box p { color: var(--text-muted); font-size: 1.05rem; }
+        .guarantee-features {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .guarantee-features span { font-weight: 700; color: var(--text-dark); }
+        .guarantee-features span i { color: var(--secondary); margin-left: 0.3rem; }
+
+        .footer {
+            background: var(--primary);
+            color: #94a3b8;
+            padding: 3rem 0 2rem;
+            text-align: center;
+        }
+        .footer .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .footer .social-links a {
+            color: #94a3b8;
+            font-size: 1.5rem;
+            transition: 0.3s;
+        }
+        .footer .social-links a:hover { color: var(--gold); transform: translateY(-3px); }
+
+        .wa-float {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: var(--whatsapp);
+            color: #fff;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 10px 25px rgba(37,211,102,0.45);
+            z-index: 999;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .wa-float:hover { transform: scale(1.12) rotate(10deg); }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            background: var(--primary);
+            color: #fff;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow);
+            z-index: 999;
+            cursor: pointer;
+            border: none;
+            transition: 0.3s;
+        }
+        .back-to-top:hover { background: var(--gold); color: #000; transform: translateY(-5px); }
+        .back-to-top.show { display: flex; }
+
+        @media (max-width: 768px) {
+            .hero-new h1 { font-size: 2.2rem; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .pricing-card.featured { transform: none; }
+            .pricing-card.featured:hover { transform: translateY(-5px); }
+            .mobile-frame { max-width: 200px; }
+            .mobile-frame iframe { height: 380px; }
+            .header .container { flex-direction: column; text-align: center; }
+            .header .nav-links { justify-content: center; }
+        }
+
+        .fade-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+    <!-- ===== الهيدر ===== -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-tshirt" style="color: var(--gold);"></i>
+                <span>نظام</span> الملابس
+            </div>
+            <nav class="nav-links">
+                <a href="#features">المميزات</a>
+                <a href="#mobile">الموبايل</a>
+                <a href="#pricing">الباقات</a>
+                <a href="#payment">الدفع</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ===== الهيرو ===== -->
+    <section class="hero-new">
+        <div class="container">
+            <div class="badge fade-up">
+                <i class="fas fa-crown"></i> الأكثر مبيعاً في مصر 2026
+            </div>
+            <h1 class="fade-up">
+                نظام إدارة محلات <br />
+                <span>الملابس والأزياء</span>
+            </h1>
+            <p class="fade-up">
+                نظام متكامل لإدارة مخزون الملابس، المقاسات، الألوان، الماركات، والعروض — كل هذا في منصة واحدة سهلة وبسيطة.
+            </p>
+            <div class="fade-up">
+                <a href="#pricing" class="btn-gold">
+                    <i class="fas fa-rocket"></i> اشتري الآن
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== المميزات ===== -->
+    <section class="section-padding bg-light" id="features">
+        <div class="container">
+            <div class="section-title fade-up">
+                <h2>💪 مميزات النظام</h2>
+                <p>كل ما تحتاجه لإدارة محل ملابسك باحترافية</p>
+            </div>
+            <div class="grid-3">
+                <div class="card fade-up">
+                    <div class="icon"><i class="fas fa-ruler-combined"></i></div>
+                    <h3>المقاسات</h3>
+                    <p>صغير - وسط - كبير - XL - XXL</p>
+                </div>
+                <div class="card fade-up">
+                    <div class="icon"><i class="fas fa-palette"></i></div>
+                    <h3>الألوان</h3>
+                    <p>أسود - أبيض - أزرق - أحمر - أخضر</p>
+                </div>
+                <div class="card fade-up">
+                    <div class="icon"><i class="fas fa-tag"></i></div>
+                    <h3>الماركات</h3>
+                    <p>ماركات عالمية ومحلية</p>
+                </div>
+                <div class="card fade-up">
+                    <div class="icon"><i class="fas fa-calendar-alt"></i></div>
+                    <h3>المواسم</h3>
+                    <p>صيفي - شتوي - خريفي - ربيعي</p>
+                </div>
+                <div class="card fade-up">
+                    <div class="icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>العروض</h3>
+                    <p>تخفيضات وعروض موسمية</p>
+                </div>
+                <div class="card fade-up">
+                    <div class="icon"><i class="fas fa-file-invoice"></i></div>
+                    <h3>التقارير</h3>
+                    <p>مبيعات - مخزون - عملاء</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== قسم الموبايل ===== -->
+    <section class="section-padding bg-white" id="mobile">
+        <div class="container">
+            <div class="section-title fade-up">
+                <h2>📱 شاهد النظام على موبايلك</h2>
+                <p>جرب النظام بنفسك من خلال هاتفك</p>
+            </div>
+            <div class="grid-2">
+                <div class="mobile-frame fade-up">
+                    <div class="notch"></div>
+                    <iframe src="https://mostafatifa1122-eng.github.io/sot/#products" title="نظام إدارة محلات الملابس"></iframe>
+                </div>
+                <div class="fade-up">
+                    <h3 style="font-size:1.8rem;color:var(--primary);font-weight:800;margin-bottom:1rem;">📲 نظام متجاوب مع كل الأجهزة</h3>
+                    <p style="color:var(--text-muted);font-size:1.05rem;margin-bottom:1.5rem;">
+                        النظام شغال 100% على الموبايل والتابلت والكمبيوتر. اضغط على الزر عشان تفتحه في متصفحك وتجربه بنفسك.
+                    </p>
+                    <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+                        <a href="https://mostafatifa1122-eng.github.io/sot/#products" target="_blank" class="btn-gold">
+                            <i class="fas fa-external-link-alt"></i> افتح النظام
+                        </a>
+                        <a href="#pricing" class="btn-outline-light" style="border-color:var(--primary);color:var(--primary);">
+                            <i class="fas fa-shopping-cart"></i> اشتري الآن
+                        </a>
+                    </div>
+                    <p style="margin-top:1rem;font-size:0.9rem;color:var(--text-muted);">
+                        <i class="fas fa-info-circle"></i> النظام شغال بأمان وبياناته بتتحفظ في متصفحك
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== طرق الدفع ===== -->
+    <section class="section-padding bg-light" id="payment">
+        <div class="container">
+            <div class="section-title fade-up">
+                <h2>💳 طرق الدفع المتاحة</h2>
+                <p>اختر طريقة الدفع المناسبة لك</p>
+            </div>
+            <div class="grid-4">
+                <div class="payment-card fade-up">
+                    <i class="fas fa-bolt instapay-color"></i>
+                    <h4>إنستاباي</h4>
+                    <p>01112876080</p>
+                </div>
+                <div class="payment-card fade-up">
+                    <i class="fas fa-mobile-alt vodafone-color"></i>
+                    <h4>فودافون كاش</h4>
+                    <p>01112876080</p>
+                </div>
+                <div class="payment-card fade-up">
+                    <i class="fas fa-wallet wallet-color"></i>
+                    <h4>محفظة إلكترونية</h4>
+                    <p>01112876080</p>
+                </div>
+                <div class="payment-card fade-up">
+                    <i class="fab fa-whatsapp" style="color:var(--whatsapp);"></i>
+                    <h4>واتساب</h4>
+                    <p>01112876080</p>
+                </div>
+            </div>
+            <div style="text-align:center;font-size:0.95rem;color:var(--text-muted);margin-top:1.5rem;">
+                <i class="fas fa-info-circle"></i> بعد التحويل، أرسل إيصال الدفع على واتساب لتفعيل حسابك فوراً
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== الباقات ===== -->
+    <section class="section-padding bg-white" id="pricing">
+        <div class="container">
+            <div class="section-title fade-up">
+                <h2>💎 اختر الباقة المناسبة</h2>
+                <p>عروض حصرية بمناسبة الإطلاق الرسمي</p>
+            </div>
+            <div class="grid-3" style="max-width:900px;margin:0 auto;">
+                <div class="pricing-card fade-up">
+                    <h3>الباقة الأساسية</h3>
+                    <div>
+                        <span class="old-price">199 جنيه</span>
+                        <div class="price">99 <span>جنيه</span></div>
+                    </div>
+                    <ul>
+                        <li><i class="fas fa-check"></i> نظام إدارة محلات الملابس</li>
+                        <li><i class="fas fa-check"></i> إدارة المقاسات والألوان</li>
+                        <li><i class="fas fa-check"></i> إدارة المنتجات والحركة</li>
+                        <li><i class="fas fa-check"></i> تقارير وتصدير Excel</li>
+                        <li><i class="fas fa-check"></i> يعمل على كل الأجهزة</li>
+                    </ul>
+                    <a href="https://wa.me/201112876080?text=مرحباً!%20أريد%20شراء%20نظام%20إدارة%20محلات%20الملابس%20(الباقة%20الأساسية)" target="_blank" class="btn btn-wa">
+                        <i class="fab fa-whatsapp"></i> اطلب عبر واتساب
+                    </a>
+                </div>
+                <div class="pricing-card featured fade-up">
+                    <div class="badge"><i class="fas fa-star"></i> الأكثر مبيعاً</div>
+                    <h3>الباقة الاحترافية</h3>
+                    <div>
+                        <span class="old-price">349 جنيه</span>
+                        <div class="price">149 <span>جنيه</span></div>
+                    </div>
+                    <ul>
+                        <li><i class="fas fa-check"></i> كل مميزات الباقة الأساسية</li>
+                        <li><i class="fas fa-check"></i> دعم فني لمدة شهر</li>
+                        <li><i class="fas fa-check"></i> تحديثات مجانية لمدة 6 أشهر</li>
+                        <li><i class="fas fa-check"></i> فيديو شرح كامل للنظام</li>
+                        <li><i class="fas fa-check"></i> نسخة احتياطية للبيانات</li>
+                    </ul>
+                    <a href="https://wa.me/201112876080?text=مرحباً!%20أريد%20شراء%20نظام%20إدارة%20محلات%20الملابس%20(الباقة%20الاحترافية)" target="_blank" class="btn btn-wa">
+                        <i class="fab fa-whatsapp"></i> اطلب عبر واتساب
+                    </a>
+                </div>
+                <div class="pricing-card fade-up">
+                    <h3>الباقة الممتازة</h3>
+                    <div>
+                        <span class="old-price">499 جنيه</span>
+                        <div class="price">249 <span>جنيه</span></div>
+                    </div>
+                    <ul>
+                        <li><i class="fas fa-check"></i> كل مميزات الباقة الاحترافية</li>
+                        <li><i class="fas fa-check"></i> دعم فني مدى الحياة</li>
+                        <li><i class="fas fa-check"></i> تحديثات مجانية مدى الحياة</li>
+                        <li><i class="fas fa-check"></i> تخصيص النظام حسب احتياجاتك</li>
+                        <li><i class="fas fa-check"></i> تركيب النظام على استضافتك</li>
+                    </ul>
+                    <a href="https://wa.me/201112876080?text=مرحباً!%20أريد%20شراء%20نظام%20إدارة%20محلات%20الملابس%20(الباقة%20الممتازة)" target="_blank" class="btn btn-wa">
+                        <i class="fab fa-whatsapp"></i> اطلب عبر واتساب
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== الضمان ===== -->
+    <section class="section-padding bg-light">
+        <div class="container">
+            <div class="guarantee-box fade-up">
+                <i class="fas fa-shield-alt"></i>
+                <h2>ضمان استعادة الأموال لمدة 30 يوماً</h2>
+                <p>إذا لم يكن النظام مناسباً لمحلك، سنعيد لك كامل المبلغ — بدون طرح أي أسئلة!</p>
+                <div class="guarantee-features">
+                    <span><i class="fas fa-check-circle"></i> ضمان 100%</span>
+                    <span><i class="fas fa-check-circle"></i> دعم فني مجاني</span>
+                    <span><i class="fas fa-check-circle"></i> تحديثات مستمرة</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== الفوتر ===== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+            </div>
+            <p>
+                &copy; 2026 نظام إدارة محلات الملابس. جميع الحقوق محفوظة.
+                <br />
+                <span style="font-size:0.85rem;color:var(--text-muted);">
+                    للتواصل: <strong style="color:var(--gold);">01112876080</strong>
+                </span>
+            </p>
+        </div>
+    </footer>
+
+    <!-- ===== واتساب عائم ===== -->
+    <a href="https://wa.me/201112876080" target="_blank" class="wa-float">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- ===== زر العودة للأعلى ===== -->
+    <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // تأثيرات الدخول
+        const observerOptions = { threshold: 0.2, rootMargin: '0px 0px -50px 0px' };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+        // شريط التمرير
+        const scrollProgress = document.createElement('div');
+        scrollProgress.style.cssText = `
+            position: fixed; top: 0; left: 0; width: 0; height: 4px;
+            background: #f5a623; z-index: 99999; transition: width 0.1s;
+        `;
+        document.body.prepend(scrollProgress);
+
+        window.addEventListener('scroll', function() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            scrollProgress.style.width = (winScroll / height) * 100 + '%';
+
+            const backToTop = document.getElementById('backToTop');
+            if (winScroll > 600) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        });
+
+        console.log('✅ نظام إدارة محلات الملابس شغال!');
+        console.log('📱 للطلب: 01112876080');
+    </script>
+
+</body>
+</html>
