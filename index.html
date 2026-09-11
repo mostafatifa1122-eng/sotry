@@ -1,743 +1,864 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>نظام إدارة محلات الملابس - احترافي</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>نظام إدارة المنشآت والمتطلبات الصناعية (ERP)</title>
+    
+    <!-- Bootstrap 5 RTL CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Font (Cairo) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --primary: #0f172a;
-            --primary-light: #1e293b;
-            --secondary: #2c7a62;
-            --gold: #f5a623;
-            --gold-hover: #d98e16;
-            --bg-light: #f1f5f9;
-            --card-bg: #ffffff;
-            --text-dark: #0f172a;
-            --text-muted: #64748b;
-            --instapay: #6c3c9e;
-            --whatsapp: #25d366;
-            --vodafone: #e60000;
-            --success: #16a34a;
-            --border: #e2e8f0;
-            --shadow: 0 10px 40px rgba(0,0,0,0.08);
-            --shadow-hover: 0 20px 60px rgba(0,0,0,0.15);
+            --sidebar-bg: #1a3a5c;
+            --sidebar-hover: #244b75;
+            --sidebar-active: #0d6efd;
+            --bg-light: #f4f6f9;
+            --touch-size: 44px;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
+
         body {
-            font-family: 'Tajawal', sans-serif;
-            background: var(--bg-light);
-            color: var(--text-dark);
-            line-height: 1.7;
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-light);
+            color: #333;
             overflow-x: hidden;
+            padding-bottom: env(safe-area-inset-bottom);
         }
-        .container { width: 90%; max-width: 1200px; margin: 0 auto; }
 
-        .header {
-            background: var(--primary);
-            padding: 0.8rem 0;
-            border-bottom: 3px solid var(--gold);
-            position: sticky;
-            top: 0;
-            z-index: 999;
-        }
-        .header .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        .header .logo {
-            color: #fff;
-            font-size: 1.3rem;
-            font-weight: 900;
+        /* Loading Spinner Overlay */
+        #loadingOverlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 9999;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            justify-content: center;
+            transition: opacity 0.3s ease;
         }
-        .header .logo span { color: var(--gold); }
-        .header .nav-links {
-            display: flex;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-        }
-        .header .nav-links a {
-            color: #94a3b8;
-            text-decoration: none;
-            font-weight: 600;
-            transition: 0.3s;
-            font-size: 0.95rem;
-        }
-        .header .nav-links a:hover { color: var(--gold); }
 
-        .hero-new {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-            color: #fff;
-            padding: 4rem 0 5rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
+        /* Top Notification Bar */
+        .notification-bar {
+            background: linear-gradient(90deg, #1a3a5c, #0d6efd);
+            color: white;
+            padding: 8px 15px;
+            font-size: 0.85rem;
         }
-        .hero-new .badge {
-            display: inline-block;
-            background: rgba(245,166,35,0.15);
-            border: 1px solid var(--gold);
-            color: var(--gold);
-            padding: 0.3rem 1.2rem;
-            border-radius: 30px;
-            font-size: 0.9rem;
+
+        /* Sidebar Styling */
+        .sidebar {
+            background-color: var(--sidebar-bg);
+            min-height: 100vh;
+            color: white;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar .nav-link {
+            color: #d1d9e6;
+            padding: 12px 16px;
+            margin: 3px 8px;
+            border-radius: 8px;
+            min-height: var(--touch-size);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.92rem;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: var(--sidebar-hover);
+            color: #ffffff;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: var(--sidebar-active);
+            color: #ffffff;
             font-weight: 700;
-            margin-bottom: 1.5rem;
         }
-        .hero-new h1 {
-            font-size: 3.2rem;
-            font-weight: 900;
-            line-height: 1.2;
-            margin-bottom: 1rem;
+
+        .sidebar .nav-link i {
+            font-size: 1.15rem;
         }
-        .hero-new h1 span { color: var(--gold); }
-        .hero-new p {
-            font-size: 1.2rem;
-            color: #94a3b8;
-            max-width: 650px;
-            margin: 0 auto 2rem;
+
+        /* Content Area */
+        .main-content {
+            padding: 20px;
+            min-height: calc(100vh - 40px);
         }
-        .btn-gold {
-            background: var(--gold);
-            color: #000;
-            padding: 1rem 2.8rem;
-            border-radius: 50px;
-            font-weight: 800;
-            font-size: 1.1rem;
+
+        .card-stat {
             border: none;
-            cursor: pointer;
-            transition: 0.3s;
-            text-decoration: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .card-stat:hover {
+            transform: translateY(-3px);
+        }
+
+        .table-responsive {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            padding: 15px;
+        }
+
+        /* Touch-friendly buttons */
+        .btn-touch {
+            min-height: var(--touch-size);
             display: inline-flex;
             align-items: center;
-            gap: 0.7rem;
-            box-shadow: 0 10px 30px rgba(245,166,35,0.3);
-        }
-        .btn-gold:hover { background: var(--gold-hover); transform: translateY(-3px); }
-        .btn-outline-light {
-            background: transparent;
-            color: #fff;
-            padding: 1rem 2.2rem;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            border: 1px solid rgba(255,255,255,0.2);
-            cursor: pointer;
-            transition: 0.3s;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.7rem;
-        }
-        .btn-outline-light:hover { background: rgba(255,255,255,0.1); border-color: #fff; }
-
-        .section-padding { padding: 4rem 0; }
-        .bg-light { background: var(--bg-light); }
-        .bg-white { background: var(--card-bg); }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        .section-title h2 {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: var(--primary);
-            position: relative;
-            display: inline-block;
-        }
-        .section-title h2::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            right: 50%;
-            transform: translateX(50%);
-            width: 60px;
-            height: 4px;
-            background: var(--gold);
-            border-radius: 4px;
-        }
-        .section-title p {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            margin-top: 1rem;
-        }
-
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-        }
-        .grid-4 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-        }
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            align-items: center;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 2rem;
-            border: 1px solid var(--border);
-            transition: 0.3s;
-            box-shadow: var(--shadow);
-            text-align: center;
-        }
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-hover);
-        }
-        .card .icon { font-size: 2.5rem; color: var(--secondary); margin-bottom: 1rem; }
-        .card h3 { font-size: 1.2rem; color: var(--primary); margin-bottom: 0.5rem; }
-        .card p { color: var(--text-muted); font-size: 0.95rem; }
-
-        .mobile-frame {
-            position: relative;
-            max-width: 280px;
-            margin: 0 auto;
-            border-radius: 36px;
-            border: 8px solid #1a1a2e;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
-            background: #fff;
-        }
-        .mobile-frame iframe {
-            width: 100%;
-            height: 500px;
-            border: none;
-            display: block;
-        }
-        .mobile-frame .notch {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 120px;
-            height: 24px;
-            background: #1a1a2e;
-            border-radius: 0 0 16px 16px;
-            z-index: 10;
-        }
-
-        .payment-card {
-            text-align: center;
-            padding: 1.5rem;
-            background: var(--card-bg);
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            transition: 0.3s;
-        }
-        .payment-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
-        .payment-card i { font-size: 2.5rem; margin-bottom: 0.5rem; }
-        .payment-card .instapay-color { color: var(--instapay); }
-        .payment-card .vodafone-color { color: var(--vodafone); }
-        .payment-card .wallet-color { color: var(--gold); }
-        .payment-card h4 { color: var(--primary); margin-bottom: 0.3rem; }
-        .payment-card p { color: var(--text-muted); font-weight: 700; }
-
-        .pricing-card {
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 2rem;
-            border: 1px solid var(--border);
-            text-align: center;
-            transition: 0.3s;
-            display: flex;
-            flex-direction: column;
-        }
-        .pricing-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-hover); }
-        .pricing-card.featured {
-            border: 2px solid var(--gold);
-            transform: scale(1.03);
-        }
-        .pricing-card.featured:hover { transform: scale(1.03) translateY(-8px); }
-        .pricing-card .badge {
-            background: var(--gold);
-            color: #000;
-            padding: 0.3rem 1rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 800;
-            display: inline-block;
-            margin-bottom: 1rem;
-        }
-        .pricing-card .price {
-            font-size: 2.5rem;
-            font-weight: 900;
-            color: var(--primary);
-        }
-        .pricing-card .price span { font-size: 1rem; font-weight: 400; color: var(--text-muted); }
-        .pricing-card .old-price {
-            text-decoration: line-through;
-            color: #94a3b8;
-            font-size: 1.1rem;
-            margin-right: 0.5rem;
-        }
-        .pricing-card ul {
-            list-style: none;
-            text-align: right;
-            margin: 1.5rem 0;
-            flex-grow: 1;
-        }
-        .pricing-card ul li {
-            padding: 0.4rem 0;
-            color: var(--text-muted);
-        }
-        .pricing-card ul li i { color: var(--success); margin-left: 0.5rem; }
-        .pricing-card .btn {
-            padding: 0.9rem;
-            border-radius: 50px;
-            font-weight: 800;
-            font-size: 1rem;
-            border: none;
-            cursor: pointer;
-            transition: 0.3s;
-            text-decoration: none;
-            display: inline-block;
-            width: 100%;
-        }
-        .btn-wa { background: var(--whatsapp); color: #fff; }
-        .btn-wa:hover { background: #1eb954; }
-
-        .steps-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-        }
-        .step-card {
-            text-align: center;
-            padding: 2rem;
-            background: var(--card-bg);
-            border-radius: 20px;
-            border: 1px solid var(--border);
-        }
-        .step-number {
-            width: 50px;
-            height: 50px;
-            background: var(--gold);
-            color: #000;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            font-weight: 900;
-            margin: 0 auto 1rem;
+            padding-left: 18px;
+            padding-right: 18px;
         }
 
-        .guarantee-box {
-            background: var(--card-bg);
-            padding: 3rem;
-            border-radius: 24px;
-            text-align: center;
-            border: 2px solid var(--gold);
-            max-width: 700px;
-            margin: 0 auto;
-        }
-        .guarantee-box i { font-size: 3.5rem; color: var(--gold); margin-bottom: 1rem; }
-        .guarantee-box h2 { font-size: 1.8rem; color: var(--primary); margin-bottom: 0.5rem; }
-        .guarantee-box p { color: var(--text-muted); font-size: 1.05rem; }
-        .guarantee-features {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-top: 1.5rem;
-            flex-wrap: wrap;
-        }
-        .guarantee-features span { font-weight: 700; color: var(--text-dark); }
-        .guarantee-features span i { color: var(--secondary); margin-left: 0.3rem; }
-
-        .footer {
-            background: var(--primary);
-            color: #94a3b8;
-            padding: 3rem 0 2rem;
-            text-align: center;
-        }
-        .footer .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        .footer .social-links a {
-            color: #94a3b8;
-            font-size: 1.5rem;
-            transition: 0.3s;
-        }
-        .footer .social-links a:hover { color: var(--gold); transform: translateY(-3px); }
-
-        .wa-float {
+        /* Back to top button */
+        #btnBackToTop {
             position: fixed;
-            bottom: 30px;
-            left: 30px;
-            background: var(--whatsapp);
-            color: #fff;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            box-shadow: 0 10px 25px rgba(37,211,102,0.45);
-            z-index: 999;
-            text-decoration: none;
-            transition: 0.3s;
-        }
-        .wa-float:hover { transform: scale(1.12) rotate(10deg); }
-
-        .back-to-top {
-            position: fixed;
-            bottom: 100px;
-            right: 30px;
-            background: var(--primary);
-            color: #fff;
-            width: 50px;
-            height: 50px;
+            bottom: 25px;
+            left: 25px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             display: none;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            box-shadow: var(--shadow);
-            z-index: 999;
-            cursor: pointer;
-            border: none;
-            transition: 0.3s;
-        }
-        .back-to-top:hover { background: var(--gold); color: #000; transform: translateY(-5px); }
-        .back-to-top.show { display: flex; }
-
-        @media (max-width: 768px) {
-            .hero-new h1 { font-size: 2.2rem; }
-            .grid-2 { grid-template-columns: 1fr; }
-            .pricing-card.featured { transform: none; }
-            .pricing-card.featured:hover { transform: translateY(-5px); }
-            .mobile-frame { max-width: 200px; }
-            .mobile-frame iframe { height: 380px; }
-            .header .container { flex-direction: column; text-align: center; }
-            .header .nav-links { justify-content: center; }
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 990;
         }
 
-        .fade-up {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Print Mode Adjustments */
+        @media print {
+            .sidebar, .notification-bar, #btnBackToTop, .no-print, .btn, .modal {
+                display: none !important;
+            }
+            .main-content {
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .table-responsive {
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
         }
-        .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+        /* Responsive Breakpoints Rules */
+        @media (max-width: 991.98px) {
+            .sidebar {
+                position: fixed;
+                top: 0; right: -100%;
+                width: 280px;
+                height: 100%;
+                overflow-y: auto;
+            }
+            .sidebar.show {
+                right: 0;
+            }
+            .sidebar-backdrop {
+                position: fixed;
+                top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 999;
+                display: none;
+            }
+            .sidebar-backdrop.show {
+                display: block;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!-- ===== الهيدر ===== -->
-    <header class="header">
-        <div class="container">
-            <div class="logo">
-                <i class="fas fa-tshirt" style="color: var(--gold);"></i>
-                <span>نظام</span> الملابس
-            </div>
-            <nav class="nav-links">
-                <a href="#features">المميزات</a>
-                <a href="#mobile">الموبايل</a>
-                <a href="#pricing">الباقات</a>
-                <a href="#payment">الدفع</a>
-            </nav>
+    <!-- Loading Animation Overlay -->
+    <div id="loadingOverlay">
+        <div class="text-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+            <p class="mt-3 text-secondary fw-bold">جاري تحميل نظام ERP...</p>
         </div>
-    </header>
+    </div>
 
-    <!-- ===== الهيرو ===== -->
-    <section class="hero-new">
-        <div class="container">
-            <div class="badge fade-up">
-                <i class="fas fa-crown"></i> الأكثر مبيعاً في مصر 2026
-            </div>
-            <h1 class="fade-up">
-                نظام إدارة محلات <br />
-                <span>الملابس والأزياء</span>
-            </h1>
-            <p class="fade-up">
-                نظام متكامل لإدارة مخزون الملابس، المقاسات، الألوان، الماركات، والعروض — كل هذا في منصة واحدة سهلة وبسيطة.
-            </p>
-            <div class="fade-up">
-                <a href="#pricing" class="btn-gold">
-                    <i class="fas fa-rocket"></i> اشتري الآن
-                </a>
-            </div>
-        </div>
-    </section>
+    <!-- Notification Bar -->
+    <div class="notification-bar d-flex justify-content-between align-items-center no-print">
+        <span><i class="bi bi-info-circle-fill me-1"></i> النظام متصل ومباشر - جميع الصلاحيات مفتوحة بدون كلمة مرور</span>
+        <span id="currentDateTime" class="d-none d-md-inline"></span>
+    </div>
 
-    <!-- ===== المميزات ===== -->
-    <section class="section-padding bg-light" id="features">
-        <div class="container">
-            <div class="section-title fade-up">
-                <h2>💪 مميزات النظام</h2>
-                <p>كل ما تحتاجه لإدارة محل ملابسك باحترافية</p>
-            </div>
-            <div class="grid-3">
-                <div class="card fade-up">
-                    <div class="icon"><i class="fas fa-ruler-combined"></i></div>
-                    <h3>المقاسات</h3>
-                    <p>صغير - وسط - كبير - XL - XXL</p>
-                </div>
-                <div class="card fade-up">
-                    <div class="icon"><i class="fas fa-palette"></i></div>
-                    <h3>الألوان</h3>
-                    <p>أسود - أبيض - أزرق - أحمر - أخضر</p>
-                </div>
-                <div class="card fade-up">
-                    <div class="icon"><i class="fas fa-tag"></i></div>
-                    <h3>الماركات</h3>
-                    <p>ماركات عالمية ومحلية</p>
-                </div>
-                <div class="card fade-up">
-                    <div class="icon"><i class="fas fa-calendar-alt"></i></div>
-                    <h3>المواسم</h3>
-                    <p>صيفي - شتوي - خريفي - ربيعي</p>
-                </div>
-                <div class="card fade-up">
-                    <div class="icon"><i class="fas fa-chart-line"></i></div>
-                    <h3>العروض</h3>
-                    <p>تخفيضات وعروض موسمية</p>
-                </div>
-                <div class="card fade-up">
-                    <div class="icon"><i class="fas fa-file-invoice"></i></div>
-                    <h3>التقارير</h3>
-                    <p>مبيعات - مخزون - عملاء</p>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div class="container-fluid p-0">
+        <div class="row g-0">
+            
+            <!-- Backdrop for Mobile Sidebar -->
+            <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 
-    <!-- ===== قسم الموبايل ===== -->
-    <section class="section-padding bg-white" id="mobile">
-        <div class="container">
-            <div class="section-title fade-up">
-                <h2>📱 شاهد النظام على موبايلك</h2>
-                <p>جرب النظام بنفسك من خلال هاتفك</p>
-            </div>
-            <div class="grid-2">
-                <div class="mobile-frame fade-up">
-                    <div class="notch"></div>
-                    <iframe src="https://mostafatifa1122-eng.github.io/sot/#products" title="نظام إدارة محلات الملابس"></iframe>
-                </div>
-                <div class="fade-up">
-                    <h3 style="font-size:1.8rem;color:var(--primary);font-weight:800;margin-bottom:1rem;">📲 نظام متجاوب مع كل الأجهزة</h3>
-                    <p style="color:var(--text-muted);font-size:1.05rem;margin-bottom:1.5rem;">
-                        النظام شغال 100% على الموبايل والتابلت والكمبيوتر. اضغط على الزر عشان تفتحه في متصفحك وتجربه بنفسك.
-                    </p>
-                    <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-                        <a href="https://mostafatifa1122-eng.github.io/sot/#products" target="_blank" class="btn-gold">
-                            <i class="fas fa-external-link-alt"></i> افتح النظام
-                        </a>
-                        <a href="#pricing" class="btn-outline-light" style="border-color:var(--primary);color:var(--primary);">
-                            <i class="fas fa-shopping-cart"></i> اشتري الآن
-                        </a>
-                    </div>
-                    <p style="margin-top:1rem;font-size:0.9rem;color:var(--text-muted);">
-                        <i class="fas fa-info-circle"></i> النظام شغال بأمان وبياناته بتتحفظ في متصفحك
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ===== طرق الدفع ===== -->
-    <section class="section-padding bg-light" id="payment">
-        <div class="container">
-            <div class="section-title fade-up">
-                <h2>💳 طرق الدفع المتاحة</h2>
-                <p>اختر طريقة الدفع المناسبة لك</p>
-            </div>
-            <div class="grid-4">
-                <div class="payment-card fade-up">
-                    <i class="fas fa-bolt instapay-color"></i>
-                    <h4>إنستاباي</h4>
-                    <p>01112876080</p>
-                </div>
-                <div class="payment-card fade-up">
-                    <i class="fas fa-mobile-alt vodafone-color"></i>
-                    <h4>فودافون كاش</h4>
-                    <p>01112876080</p>
-                </div>
-                <div class="payment-card fade-up">
-                    <i class="fas fa-wallet wallet-color"></i>
-                    <h4>محفظة إلكترونية</h4>
-                    <p>01112876080</p>
-                </div>
-                <div class="payment-card fade-up">
-                    <i class="fab fa-whatsapp" style="color:var(--whatsapp);"></i>
-                    <h4>واتساب</h4>
-                    <p>01112876080</p>
-                </div>
-            </div>
-            <div style="text-align:center;font-size:0.95rem;color:var(--text-muted);margin-top:1.5rem;">
-                <i class="fas fa-info-circle"></i> بعد التحويل، أرسل إيصال الدفع على واتساب لتفعيل حسابك فوراً
-            </div>
-        </div>
-    </section>
-
-    <!-- ===== الباقات ===== -->
-    <section class="section-padding bg-white" id="pricing">
-        <div class="container">
-            <div class="section-title fade-up">
-                <h2>💎 اختر الباقة المناسبة</h2>
-                <p>عروض حصرية بمناسبة الإطلاق الرسمي</p>
-            </div>
-            <div class="grid-3" style="max-width:900px;margin:0 auto;">
-                <div class="pricing-card fade-up">
-                    <h3>الباقة الأساسية</h3>
+            <!-- Sidebar Navigation (16 Sections) -->
+            <div class="col-lg-2 sidebar" id="mainSidebar">
+                <div class="p-3 text-center border-bottom border-secondary d-flex justify-content-between align-items-center">
                     <div>
-                        <span class="old-price">199 جنيه</span>
-                        <div class="price">99 <span>جنيه</span></div>
+                        <h5 class="m-0 fw-bold text-white"><i class="bi bi-box-seam me-2"></i>نظام ERP</h5>
+                        <small class="text-muted">المنشآت والمصانع</small>
                     </div>
-                    <ul>
-                        <li><i class="fas fa-check"></i> نظام إدارة محلات الملابس</li>
-                        <li><i class="fas fa-check"></i> إدارة المقاسات والألوان</li>
-                        <li><i class="fas fa-check"></i> إدارة المنتجات والحركة</li>
-                        <li><i class="fas fa-check"></i> تقارير وتصدير Excel</li>
-                        <li><i class="fas fa-check"></i> يعمل على كل الأجهزة</li>
-                    </ul>
-                    <a href="https://wa.me/201112876080?text=مرحباً!%20أريد%20شراء%20نظام%20إدارة%20محلات%20الملابس%20(الباقة%20الأساسية)" target="_blank" class="btn btn-wa">
-                        <i class="fab fa-whatsapp"></i> اطلب عبر واتساب
-                    </a>
+                    <button class="btn btn-sm text-white d-lg-none" onclick="toggleSidebar()"><i class="bi bi-x-lg fs-4"></i></button>
                 </div>
-                <div class="pricing-card featured fade-up">
-                    <div class="badge"><i class="fas fa-star"></i> الأكثر مبيعاً</div>
-                    <h3>الباقة الاحترافية</h3>
-                    <div>
-                        <span class="old-price">349 جنيه</span>
-                        <div class="price">149 <span>جنيه</span></div>
-                    </div>
-                    <ul>
-                        <li><i class="fas fa-check"></i> كل مميزات الباقة الأساسية</li>
-                        <li><i class="fas fa-check"></i> دعم فني لمدة شهر</li>
-                        <li><i class="fas fa-check"></i> تحديثات مجانية لمدة 6 أشهر</li>
-                        <li><i class="fas fa-check"></i> فيديو شرح كامل للنظام</li>
-                        <li><i class="fas fa-check"></i> نسخة احتياطية للبيانات</li>
-                    </ul>
-                    <a href="https://wa.me/201112876080?text=مرحباً!%20أريد%20شراء%20نظام%20إدارة%20محلات%20الملابس%20(الباقة%20الاحترافية)" target="_blank" class="btn btn-wa">
-                        <i class="fab fa-whatsapp"></i> اطلب عبر واتساب
-                    </a>
+                
+                <div class="nav flex-column py-2" id="v-pills-tab" role="tablist">
+                    <a class="nav-link active" data-bs-toggle="pill" href="#sec-dashboard" onclick="switchSection('dashboard')"><i class="bi bi-speedometer2"></i> لوحة التحكم</a>
+                    <a class="nav-link" data-bs-toggle="pill" href="#sec-products" onclick="switchSection('products')"><i class="bi bi-box-seam"></i> المنتجات والمخازن</a>
+                    <a class="nav-link" data-bs-toggle="pill" href="#sec-invoices" onclick="switchSection('invoices')"><i class="bi bi-receipt"></i> الفواتير (بيع/شراء)</a>
+                    <a class="nav-link" data-bs-toggle="pill" href="#sec-batches" onclick="switchSection('batches')"><i class="bi bi-tags"></i> تتبع الدفعات (Batch)</a>
+                    <a class="nav-link" data-bs-toggle="pill" href="#sec-lab" onclick="switchSection('lab')"><i class="bi bi-flask"></i> المعمل الكيميائي</a>
+                    <a class="nav-link" data-bs-toggle="pill" href="#sec-employees" onclick="switchSection('employees')"><i class="bi bi-people"></i> إدارة الموظفين</a>
+                    <a class="nav-link" data-bs-toggle="pill" href="#sec-attendance" onclick="switchSection('attendance')"><i class="bi bi-clock-check"></i> الحضور والانصراف</a>
+                    <a class="nav-link" data-bs-toggle="pill" href="#sec-payroll" onclick="switchSection('payroll')"><i class="bi bi-cash-stack"></i> مسير الرواتب</a>
+                    <a class="nav-link" data-bs-toggle="pill" href="#sec-qc" onclick="switchSection('qc')"><i class="bi bi-check-circle-switch"></i> مراقبة الجودة (QC)</a>
+                    <a class="nav-link" data-bs-toggle="pill" href="#sec-sds" onclick="switchSection('sds')"><i class="bi bi-file-earmark-medical"></i> صحائف السلامة (SDS)</a>
+                    <a class="nav-link" data-bs-toggle="pill" href="#sec-waste" onclick="switchSection('waste')"><i class="bi bi-trash3"></i> المخلفات الكيميائية</a>
+                    <a class="nav-link" data-bs-toggle="pill" href="#sec-maintenance" onclick="switchSection('maintenance')"><i class="bi bi-tools"></i> الصيانة الدورية</a>
+                    <a class="nav-link" data-bs-toggle="pill" href="#sec-shipping" onclick="switchSection('shipping')"><i class="bi bi-truck"></i> سجل الشحن</a>
+                    <a class="nav-link" data-sec-btn data-bs-toggle="pill" href="#sec-complaints" onclick="switchSection('complaints')"><i class="bi bi-exclamation-octagon"></i> الشكاوى والمتابعة</a>
+                    <a class="nav-link" data-bs-toggle="pill" href="#sec-iso" onclick="switchSection('iso')"><i class="bi bi-patch-check"></i> تقارير الأيزو</a>
+                    <a class="nav-link" data-bs-toggle="pill" href="#sec-users" onclick="switchSection('users')"><i class="bi bi-person-gear"></i> إدارة المستخدمين</a>
                 </div>
-                <div class="pricing-card fade-up">
-                    <h3>الباقة الممتازة</h3>
-                    <div>
-                        <span class="old-price">499 جنيه</span>
-                        <div class="price">249 <span>جنيه</span></div>
+            </div>
+
+            <!-- Main Content Container -->
+            <div class="col-lg-10 main-content">
+                
+                <!-- Mobile Top Header Bar -->
+                <div class="d-flex justify-content-between align-items-center mb-3 d-lg-none bg-white p-2 rounded shadow-sm no-print">
+                    <button class="btn btn-outline-dark btn-touch" onclick="toggleSidebar()">
+                        <i class="bi bi-list fs-4"></i>
+                    </button>
+                    <h5 class="m-0 fw-bold text-primary">نظام ERP المتكامل</h5>
+                    <div></div>
+                </div>
+
+                <!-- Active View Container -->
+                <div id="sectionContainer">
+
+                    <!-- Section 1: Dashboard -->
+                    <div id="sec-dashboard" class="section-view">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="fw-bold m-0"><i class="bi bi-speedometer2 text-primary me-2"></i>لوحة التحكم والإحصائيات</h4>
+                            <button class="btn btn-outline-secondary btn-touch no-print" onclick="window.print()"><i class="bi bi-printer me-1"></i> طباعة الملخص</button>
+                        </div>
+
+                        <!-- Stat Cards -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-12 col-sm-6 col-xl-3">
+                                <div class="card card-stat bg-primary text-white p-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <small>إجمالي المنتجات</small>
+                                            <h3 class="fw-bold m-0 mt-2" id="stat-products">0</h3>
+                                        </div>
+                                        <i class="bi bi-box-seam fs-1 opacity-50"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 col-xl-3">
+                                <div class="card card-stat bg-success text-white p-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <small>إجمالي إيرادات الفواتير</small>
+                                            <h3 class="fw-bold m-0 mt-2" id="stat-invoices">0 ج.م</h3>
+                                        </div>
+                                        <i class="bi bi-currency-dollar fs-1 opacity-50"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 col-xl-3">
+                                <div class="card card-stat bg-warning text-dark p-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <small>عدد الموظفين</small>
+                                            <h3 class="fw-bold m-0 mt-2" id="stat-employees">0</h3>
+                                        </div>
+                                        <i class="bi bi-people fs-1 opacity-50"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 col-xl-3">
+                                <div class="card card-stat bg-danger text-white p-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <small>الشكاوى المفتوحة</small>
+                                            <h3 class="fw-bold m-0 mt-2" id="stat-complaints">0</h3>
+                                        </div>
+                                        <i class="bi bi-exclamation-triangle fs-1 opacity-50"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dashboard Alerts Section -->
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="card border-0 shadow-sm p-3">
+                                    <h5 class="fw-bold mb-3 text-danger"><i class="bi bi-bell me-2"></i>تنبيهات نواقص المخزون</h5>
+                                    <ul class="list-group list-group-flush" id="dashAlertsList">
+                                        <li class="list-group-item text-muted">لا يوجد تنبيهات مخزون حالياً</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card border-0 shadow-sm p-3">
+                                    <h5 class="fw-bold mb-3 text-info"><i class="bi bi-journal-check me-2"></i>ملخص حركة اليوم</h5>
+                                    <p class="text-muted m-0">النظام يعمل بكفاءة عالية بدون تسجيل دخول. جميع الوحدات نشطة وقابلة للتعديل الفوري عبر القائمة الجانبية.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <ul>
-                        <li><i class="fas fa-check"></i> كل مميزات الباقة الاحترافية</li>
-                        <li><i class="fas fa-check"></i> دعم فني مدى الحياة</li>
-                        <li><i class="fas fa-check"></i> تحديثات مجانية مدى الحياة</li>
-                        <li><i class="fas fa-check"></i> تخصيص النظام حسب احتياجاتك</li>
-                        <li><i class="fas fa-check"></i> تركيب النظام على استضافتك</li>
-                    </ul>
-                    <a href="https://wa.me/201112876080?text=مرحباً!%20أريد%20شراء%20نظام%20إدارة%20محلات%20الملابس%20(الباقة%20الممتازة)" target="_blank" class="btn btn-wa">
-                        <i class="fab fa-whatsapp"></i> اطلب عبر واتساب
-                    </a>
+
+                    <!-- Generic Section Template Container for remaining 15 Sections -->
+                    <div id="sec-generic" class="section-view d-none">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                            <h4 class="fw-bold m-0" id="genericTitle">اسم القسم</h4>
+                            <div class="d-flex gap-2 no-print">
+                                <button class="btn btn-primary btn-touch" onclick="openModal()"><i class="bi bi-plus-lg me-1"></i> إضافة جديد</button>
+                                <button class="btn btn-outline-success btn-touch" onclick="exportCSV()"><i class="bi bi-file-earmark-excel me-1"></i> تصدير CSV</button>
+                            </div>
+                        </div>
+
+                        <!-- Search Bar -->
+                        <div class="row mb-3 no-print">
+                            <div class="col-12 col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                                    <input type="text" id="searchInput" class="form-control" placeholder="بحث في هذا القسم..." onkeyup="filterTable()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Table View -->
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle" id="dataTable">
+                                <thead class="table-light" id="tableHead"></thead>
+                                <tbody id="tableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- ===== الضمان ===== -->
-    <section class="section-padding bg-light">
-        <div class="container">
-            <div class="guarantee-box fade-up">
-                <i class="fas fa-shield-alt"></i>
-                <h2>ضمان استعادة الأموال لمدة 30 يوماً</h2>
-                <p>إذا لم يكن النظام مناسباً لمحلك، سنعيد لك كامل المبلغ — بدون طرح أي أسئلة!</p>
-                <div class="guarantee-features">
-                    <span><i class="fas fa-check-circle"></i> ضمان 100%</span>
-                    <span><i class="fas fa-check-circle"></i> دعم فني مجاني</span>
-                    <span><i class="fas fa-check-circle"></i> تحديثات مستمرة</span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ===== الفوتر ===== -->
-    <footer class="footer">
-        <div class="container">
-            <div class="social-links">
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-youtube"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-            </div>
-            <p>
-                &copy; 2026 نظام إدارة محلات الملابس. جميع الحقوق محفوظة.
-                <br />
-                <span style="font-size:0.85rem;color:var(--text-muted);">
-                    للتواصل: <strong style="color:var(--gold);">01112876080</strong>
-                </span>
-            </p>
-        </div>
-    </footer>
-
-    <!-- ===== واتساب عائم ===== -->
-    <a href="https://wa.me/201112876080" target="_blank" class="wa-float">
-        <i class="fab fa-whatsapp"></i>
-    </a>
-
-    <!-- ===== زر العودة للأعلى ===== -->
-    <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
-        <i class="fas fa-arrow-up"></i>
+    <!-- Scroll to top button -->
+    <button id="btnBackToTop" class="btn btn-primary no-print" onclick="scrollToTop()">
+        <i class="bi bi-arrow-up fs-5"></i>
     </button>
 
+    <!-- Dynamic Add/Edit Modal -->
+    <div class="modal fade" id="dynamicModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold" id="modalTitle">إضافة سجل جديد</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="dynamicForm" class="row g-3"></form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-touch" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="button" class="btn btn-primary btn-touch" onclick="saveRecord()">حفظ البيانات</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
-        // تأثيرات الدخول
-        const observerOptions = { threshold: 0.2, rootMargin: '0px 0px -50px 0px' };
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptions);
-        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+        /* ==========================================================================
+           1. Configuration & Structure Definitions for 16 Sections
+           ========================================================================== */
+        let currentSection = 'dashboard';
+        let editingIndex = -1;
+        let bsModal = null;
 
-        // شريط التمرير
-        const scrollProgress = document.createElement('div');
-        scrollProgress.style.cssText = `
-            position: fixed; top: 0; left: 0; width: 0; height: 4px;
-            background: #f5a623; z-index: 99999; transition: width 0.1s;
-        `;
-        document.body.prepend(scrollProgress);
-
-        window.addEventListener('scroll', function() {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            scrollProgress.style.width = (winScroll / height) * 100 + '%';
-
-            const backToTop = document.getElementById('backToTop');
-            if (winScroll > 600) {
-                backToTop.classList.add('show');
-            } else {
-                backToTop.classList.remove('show');
+        // Structure schemas for sections
+        const schemas = {
+            products: {
+                title: 'إدارة المنتجات والمخازن',
+                fields: [
+                    { id: 'code', label: 'كود المنتج / HS Code', type: 'text' },
+                    { id: 'name', label: 'اسم المنتج', type: 'text' },
+                    { id: 'category', label: 'التصنيف / القسم', type: 'text' },
+                    { id: 'qty', label: 'الكمية المتاحة', type: 'number' },
+                    { id: 'minQty', label: 'حد التنبيه الأدنى', type: 'number' },
+                    { id: 'price', label: 'السعر (ج.م)', type: 'number' }
+                ]
+            },
+            invoices: {
+                title: 'إدارة الفواتير (بيع / شراء / تصدير)',
+                fields: [
+                    { id: 'invNum', label: 'رقم الفاتورة', type: 'text' },
+                    { id: 'type', label: 'نوع الفاتورة', type: 'select', options: ['فاتورة بيع', 'فاتورة شراء', 'فاتورة تصدير'] },
+                    { id: 'client', label: 'العميل / المورد', type: 'text' },
+                    { id: 'amount', label: 'المبلغ الأساسي', type: 'number' },
+                    { id: 'tax', label: 'الضريبة (14%)', type: 'number' },
+                    { id: 'date', label: 'التاريخ', type: 'date' }
+                ]
+            },
+            batches: {
+                title: 'تتبع الدفعات (Batch Tracking)',
+                fields: [
+                    { id: 'batchNum', label: 'رقم التشغيلة / Batch', type: 'text' },
+                    { id: 'productName', label: 'اسم المنتج / الخامة', type: 'text' },
+                    { id: 'prodDate', label: 'تاريخ الإنتاج', type: 'date' },
+                    { id: 'expDate', label: 'تاريخ الانتهاء', type: 'date' },
+                    { id: 'line', label: 'خط الإنتاج', type: 'text' }
+                ]
+            },
+            lab: {
+                title: 'المعمل الكيميائي والتحاليل',
+                fields: [
+                    { id: 'sampleId', label: 'رقم العينة', type: 'text' },
+                    { id: 'material', label: 'المادة / الخامة', type: 'text' },
+                    { id: 'ph', label: 'درجة الحموضة (pH)', type: 'text' },
+                    { id: 'viscosity', label: 'اللزوجة (Viscosity)', type: 'text' },
+                    { id: 'result', label: 'نتيجة الفحص', type: 'select', options: ['مطابق للمواصفات', 'غير مطابق'] }
+                ]
+            },
+            employees: {
+                title: 'إدارة الموظفين',
+                fields: [
+                    { id: 'empId', label: 'رقم الموظف / البصمة', type: 'text' },
+                    { id: 'name', label: 'اسم الموظف', type: 'text' },
+                    { id: 'role', label: 'الوظيفة / القسم', type: 'text' },
+                    { id: 'phone', label: 'رقم الهاتف', type: 'text' },
+                    { id: 'salary', label: 'الراتب الأساسي', type: 'number' }
+                ]
+            },
+            attendance: {
+                title: 'سجل الحضور والانصراف',
+                fields: [
+                    { id: 'empName', label: 'اسم الموظف', type: 'text' },
+                    { id: 'fingerprintId', label: 'رقم البصمة', type: 'text' },
+                    { id: 'date', label: 'التاريخ', type: 'date' },
+                    { id: 'checkIn', label: 'وقت الحضور', type: 'time' },
+                    { id: 'checkOut', label: 'وقت الانصراف', type: 'time' }
+                ]
+            },
+            payroll: {
+                title: 'مسير الرواتب والمستحقات',
+                fields: [
+                    { id: 'empName', label: 'اسم الموظف', type: 'text' },
+                    { id: 'basicSalary', label: 'الراتب الأساسي', type: 'number' },
+                    { id: 'deductions', label: 'الخصومات / التأمينات', type: 'number' },
+                    { id: 'taxes', label: 'الضرائب', type: 'number' },
+                    { id: 'netSalary', label: 'صافي الراتب', type: 'number' },
+                    { id: 'status', label: 'حالة الصرف', type: 'select', options: ['تم الصرف', 'قيد الانتظار'] }
+                ]
+            },
+            qc: {
+                title: 'مراقبة الجودة (Quality Control)',
+                fields: [
+                    { id: 'batchRef', label: 'رقم التشغيلة / Batch', type: 'text' },
+                    { id: 'inspector', label: 'اسم القائم بالفحص', type: 'text' },
+                    { id: 'checkDate', label: 'تاريخ الفحص', type: 'date' },
+                    { id: 'status', label: 'نتيجة الجودة (Pass/Fail)', type: 'select', options: ['Pass (اجتاز)', 'Fail (مرفوض)'] },
+                    { id: 'notes', label: 'ملاحظات الفحص', type: 'text' }
+                ]
+            },
+            sds: {
+                title: 'صحائف السلامة للمواد (SDS)',
+                fields: [
+                    { id: 'chemName', label: 'اسم المادة الكيميائية', type: 'text' },
+                    { id: 'casNum', label: 'رقم CAS', type: 'text' },
+                    { id: 'hazards', label: 'عبارات الخطر (Hazard Statements)', type: 'text' },
+                    { id: 'issueDate', label: 'تاريخ الإصدار', type: 'date' },
+                    { id: 'expiryDate', label: 'تاريخ الانتهاء والمراجعة', type: 'date' }
+                ]
+            },
+            waste: {
+                title: 'سجل المخلفات الكيميائية والصناعية',
+                fields: [
+                    { id: 'wasteType', label: 'نوع المخلفات', type: 'text' },
+                    { id: 'quantity', label: 'الكمية (كجم/لتر)', type: 'number' },
+                    { id: 'vendor', label: 'المتعهد المعتمد للتخلص', type: 'text' },
+                    { id: 'disposalDate', label: 'تاريخ التسليم', type: 'date' },
+                    { id: 'certNum', label: 'رقم شهادة التخلص', type: 'text' }
+                ]
+            },
+            maintenance: {
+                title: 'جدول الصيانة الدورية والوقائية',
+                fields: [
+                    { id: 'equipName', label: 'اسم المعدة / الآلة', type: 'text' },
+                    { id: 'maintType', label: 'نوع الصيانة', type: 'select', options: ['وقائية', 'علاجية (طوارئ)'] },
+                    { id: 'schedDate', label: 'تاريخ الصيانة المخطط', type: 'date' },
+                    { id: 'technician', label: 'الفني / الشركة المنفذة', type: 'text' },
+                    { id: 'status', label: 'حالة الصيانة', type: 'select', options: ['تمت بنجاح', 'مطلوب متابعة', 'مجدولة'] }
+                ]
+            },
+            shipping: {
+                title: 'سجل الشحن والتوصيل',
+                fields: [
+                    { id: 'shipNum', label: 'رقم بوليصة الشحن', type: 'text' },
+                    { id: 'destination', label: 'جهة الوصول / العميل', type: 'text' },
+                    { id: 'carrier', label: 'شركة الشحن / السائق', type: 'text' },
+                    { id: 'shipDate', label: 'تاريخ الخروج', type: 'date' },
+                    { id: 'status', label: 'حالة الشحنة', type: 'select', options: ['في الطريق', 'تم التسليم', 'قيد التحضير'] }
+                ]
+            },
+            complaints: {
+                title: 'سجل الشكاوى ومتابعة 48 ساعة',
+                fields: [
+                    { id: 'client', label: 'اسم العميل / الجهة', type: 'text' },
+                    { id: 'subject', label: 'موضوع الشكوى', type: 'text' },
+                    { id: 'recDate', label: 'تاريخ الاستلام', type: 'date' },
+                    { id: 'action', label: 'الإجراء المتخذ', type: 'text' },
+                    { id: 'status', label: 'حالة المعالجة', type: 'select', options: ['مفتوحة (قيد المتابعة)', 'تم الحل والإغلاق'] }
+                ]
+            },
+            iso: {
+                title: 'تقارير الأيزو والسلامة ISO',
+                fields: [
+                    { id: 'docCode', label: 'كود الوثيقة / Document Code', type: 'text' },
+                    { id: 'docTitleAr', label: 'عنوان التقرير (عربي)', type: 'text' },
+                    { id: 'docTitleEn', label: 'Title (English)', type: 'text' },
+                    { id: 'standard', label: 'المعيار (ISO 9001/14001/45001)', type: 'text' },
+                    { id: 'revDate', label: 'تاريخ المراجعة', type: 'date' }
+                ]
+            },
+            users: {
+                title: 'إدارة أفراد النظام والمستخدمين',
+                fields: [
+                    { id: 'username', label: 'اسم المستخدم', type: 'text' },
+                    { id: 'fullname', label: 'الاسم بالكامل', type: 'text' },
+                    { id: 'role', label: 'الصلاحية / الدور', type: 'select', options: ['مدير نظام', 'مسؤول مخزن', 'فني معمل', 'مسؤول مبيعات'] },
+                    { id: 'status', label: 'حالة الحساب', type: 'select', options: ['نشط', 'غير نشط'] }
+                ]
             }
+        };
+
+        /* ==========================================================================
+           2. Core Initializer & Storage Functions
+           ========================================================================== */
+        document.addEventListener('DOMContentLoaded', () => {
+            bsModal = new bootstrap.Modal(document.getElementById('dynamicModal'));
+            updateClock();
+            setInterval(updateClock, 1000);
+            
+            // Seed initial sample data if empty
+            initStorageData();
+
+            // Refresh Dashboard Statistics
+            refreshDashboard();
+
+            // Hide Loading Overlay smoothly
+            setTimeout(() => {
+                const loader = document.getElementById('loadingOverlay');
+                loader.style.opacity = '0';
+                setTimeout(() => loader.style.display = 'none', 300);
+            }, 500);
+
+            // Handle scroll to top button visibility
+            window.onscroll = function() {
+                const btn = document.getElementById('btnBackToTop');
+                if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+                    btn.style.display = "flex";
+                } else {
+                    btn.style.display = "none";
+                }
+            };
         });
 
-        console.log('✅ نظام إدارة محلات الملابس شغال!');
-        console.log('📱 للطلب: 01112876080');
-    </script>
+        function updateClock() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            const timeStr = now.toLocaleTimeString('ar-EG');
+            document.getElementById('currentDateTime').innerText = `${dateStr} - ${timeStr}`;
+        }
 
+        function getStoredData(key) {
+            const data = localStorage.getItem('erp_' + key);
+            return data ? JSON.parse(data) : [];
+        }
+
+        function setStoredData(key, arrayData) {
+            localStorage.setItem('erp_' + key, JSON.stringify(arrayData));
+        }
+
+        function initStorageData() {
+            if (!localStorage.getItem('erp_products')) {
+                setStoredData('products', [
+                    { code: 'HS-2804', name: 'مادة خامة أ', category: 'كيماويات', qty: 150, minQty: 20, price: 1200 },
+                    { code: 'HS-3901', name: 'محلول معالج ب', category: 'سوائل', qty: 10, minQty: 15, price: 450 }
+                ]);
+            }
+            if (!localStorage.getItem('erp_invoices')) {
+                setStoredData('invoices', [
+                    { invNum: 'INV-1001', type: 'فاتورة بيع', client: 'شركة النور', amount: 15000, tax: 2100, date: '2026-03-01' }
+                ]);
+            }
+            if (!localStorage.getItem('erp_employees')) {
+                setStoredData('employees', [
+                    { empId: '101', name: 'أحمد محمود', role: 'مهندس جودة', phone: '0100000000', salary: 8500 }
+                ]);
+            }
+            if (!localStorage.getItem('erp_complaints')) {
+                setStoredData('complaints', [
+                    { client: 'مصنع الأمل', subject: 'تأخير شحنة', recDate: '2026-03-02', action: 'جاري التنسيق مع الشحن', status: 'مفتوحة (قيد المتابعة)' }
+                ]);
+            }
+        }
+
+        /* ==========================================================================
+           3. UI Navigation & View Controller
+           ========================================================================== */
+        function toggleSidebar() {
+            document.getElementById('mainSidebar').classList.toggle('show');
+            document.getElementById('sidebarBackdrop').classList.toggle('show');
+        }
+
+        function switchSection(secKey) {
+            currentSection = secKey;
+            
+            // Close mobile sidebar if open
+            document.getElementById('mainSidebar').classList.remove('show');
+            document.getElementById('sidebarBackdrop').classList.remove('show');
+
+            // Toggle visibility of views
+            const dashView = document.getElementById('sec-dashboard');
+            const genView = document.getElementById('sec-generic');
+
+            if (secKey === 'dashboard') {
+                dashView.classList.remove('d-none');
+                genView.classList.add('d-none');
+                refreshDashboard();
+            } else {
+                dashView.classList.add('d-none');
+                genView.classList.remove('d-none');
+                
+                // Configure generic section UI
+                const schema = schemas[secKey];
+                document.getElementById('genericTitle').innerHTML = `<i class="bi bi-folder2-open text-primary me-2"></i>${schema.title}`;
+                document.getElementById('searchInput').value = '';
+                
+                renderTable();
+            }
+        }
+
+        /* ==========================================================================
+           4. Dynamic Table Renderer & Search Filter
+           ========================================================================== */
+        function renderTable() {
+            const schema = schemas[currentSection];
+            const data = getStoredData(currentSection);
+            const thead = document.getElementById('tableHead');
+            const tbody = document.getElementById('tableBody');
+
+            // Render Table Header
+            let headHTML = '<tr><th>#</th>';
+            schema.fields.forEach(f => {
+                headHTML += `<th>${f.label}</th>`;
+            });
+            headHTML += '<th class="text-center no-print">الإجراءات</th></tr>';
+            thead.innerHTML = headHTML;
+
+            // Render Table Rows
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="${schema.fields.length + 2}" class="text-center text-muted py-4">لا توجد بيانات مسجلة في هذا القسم</td></tr>`;
+                return;
+            }
+
+            let bodyHTML = '';
+            data.forEach((row, idx) => {
+                bodyHTML += `<tr><td>${idx + 1}</td>`;
+                schema.fields.forEach(f => {
+                    let val = row[f.id] !== undefined ? row[f.id] : '-';
+                    bodyHTML += `<td>${val}</td>`;
+                });
+                bodyHTML += `
+                    <td class="text-center no-print">
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="openModal(${idx})"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteRecord(${idx})"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>`;
+            });
+            tbody.innerHTML = bodyHTML;
+        }
+
+        function filterTable() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#tableBody tr');
+
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+
+        /* ==========================================================================
+           5. Dynamic Modal Form Generation, Add, Edit & Delete Operations
+           ========================================================================== */
+        function openModal(editIndex = -1) {
+            editingIndex = editIndex;
+            const schema = schemas[currentSection];
+            const data = getStoredData(currentSection);
+            const form = document.getElementById('dynamicForm');
+            
+            document.getElementById('modalTitle').innerText = editIndex === -1 ? `إضافة جديد - ${schema.title}` : `تعديل - ${schema.title}`;
+
+            let formHTML = '';
+            schema.fields.forEach(f => {
+                const val = (editIndex !== -1 && data[editIndex] && data[editIndex][f.id] !== undefined) ? data[editIndex][f.id] : '';
+                
+                formHTML += `<div class="col-12 col-md-6">
+                    <label class="form-label fw-bold">${f.label}</label>`;
+                
+                if (f.type === 'select') {
+                    formHTML += `<select class="form-select btn-touch" id="input_${f.id}">`;
+                    f.options.forEach(opt => {
+                        const selected = val === opt ? 'selected' : '';
+                        formHTML += `<option value="${opt}" ${selected}>${opt}</option>`;
+                    });
+                    formHTML += `</select>`;
+                } else {
+                    formHTML += `<input type="${f.type}" class="form-control btn-touch" id="input_${f.id}" value="${val}">`;
+                }
+
+                formHTML += `</div>`;
+            });
+
+            form.innerHTML = formHTML;
+            bsModal.show();
+        }
+
+        function saveRecord() {
+            const schema = schemas[currentSection];
+            const data = getStoredData(currentSection);
+            let newRecord = {};
+
+            schema.fields.forEach(f => {
+                const input = document.getElementById(`input_${f.id}`);
+                if (input) {
+                    newRecord[f.id] = input.value;
+                }
+            });
+
+            if (editingIndex === -1) {
+                data.push(newRecord);
+            } else {
+                data[editingIndex] = newRecord;
+            }
+
+            setStoredData(currentSection, data);
+            bsModal.hide();
+            renderTable();
+            refreshDashboard();
+        }
+
+        function deleteRecord(idx) {
+            if (confirm('هل أنت تأكد من رغبتك في حذف هذا السجل بشكل نهائي؟')) {
+                const data = getStoredData(currentSection);
+                data.splice(idx, 1);
+                setStoredData(currentSection, data);
+                renderTable();
+                refreshDashboard();
+            }
+        }
+
+        /* ==========================================================================
+           6. Dashboard Aggregation & Analytics
+           ========================================================================== */
+        function refreshDashboard() {
+            const products = getStoredData('products');
+            const invoices = getStoredData('invoices');
+            const employees = getStoredData('employees');
+            const complaints = getStoredData('complaints');
+
+            // Product Stats
+            document.getElementById('stat-products').innerText = products.length;
+
+            // Invoices Revenue Calculation
+            let totalRev = 0;
+            invoices.forEach(inv => {
+                const amt = parseFloat(inv.amount) || 0;
+                const tax = parseFloat(inv.tax) || 0;
+                totalRev += (amt + tax);
+            });
+            document.getElementById('stat-invoices').innerText = totalRev.toLocaleString('ar-EG') + ' ج.م';
+
+            // Employee Stats
+            document.getElementById('stat-employees').innerText = employees.length;
+
+            // Open Complaints Stats
+            const openComp = complaints.filter(c => c.status && c.status.includes('مفتوحة'));
+            document.getElementById('stat-complaints').innerText = openComp.length;
+
+            // Low Stock Dashboard Alerts
+            const alertsList = document.getElementById('dashAlertsList');
+            const lowStock = products.filter(p => (parseFloat(p.qty) || 0) <= (parseFloat(p.minQty) || 0));
+
+            if (lowStock.length === 0) {
+                alertsList.innerHTML = `<li class="list-group-item text-success"><i class="bi bi-check-circle me-2"></i>جميع الكميات في المستويات الآمنة</li>`;
+            } else {
+                let alertHTML = '';
+                lowStock.forEach(p => {
+                    alertHTML += `<li class="list-group-item d-flex justify-content-between align-items-center text-danger">
+                        <span><i class="bi bi-exclamation-triangle-fill me-2"></i>${p.name} (الكود: ${p.code})</span>
+                        <span class="badge bg-danger rounded-pill">المتبقي: ${p.qty}</span>
+                    </li>`;
+                });
+                alertsList.innerHTML = alertHTML;
+            }
+        }
+
+        /* ==========================================================================
+           7. CSV Export & Utility Features
+           ========================================================================== */
+        function exportCSV() {
+            const schema = schemas[currentSection];
+            const data = getStoredData(currentSection);
+
+            if (data.length === 0) {
+                alert('لا توجد بيانات متاحة للتصدير في هذا القسم!');
+                return;
+            }
+
+            let csvContent = "\uFEFF"; // UTF-8 BOM for Arabic compatibility
+            
+            // Header Row
+            const headers = schema.fields.map(f => `"${f.label}"`);
+            csvContent += headers.join(",") + "\n";
+
+            // Data Rows
+            data.forEach(row => {
+                const values = schema.fields.map(f => {
+                    let val = row[f.id] !== undefined ? row[f.id] : '';
+                    return `"${val.toString().replace(/"/g, '""')}"`;
+                });
+                csvContent += values.join(",") + "\n";
+            });
+
+            // Download Trigger
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `ERP_Export_${currentSection}_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
 </body>
 </html>
